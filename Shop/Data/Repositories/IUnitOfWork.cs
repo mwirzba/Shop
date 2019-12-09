@@ -1,10 +1,13 @@
-﻿namespace Shop.Data.Repositories
+﻿using System;
+using System.Threading.Tasks;
+
+namespace Shop.Data.Repositories
 {
     public interface IUnitOfWork
     {
-        IProductRepository Products { get; }
-        ICategoryRepository Categories { get; }
-        int Complete();
+        ProductRepository Products { get; }
+        CategoryRepository Categories { get; }
+        Task<int> CompleteAsync();
         
     }
 }

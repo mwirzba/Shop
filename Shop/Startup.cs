@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace Shop
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["Data:StoreDb:connectionString"]));
             services.AddIdentity<IdentityUser, IdentityRole>()
@@ -31,8 +32,21 @@ namespace Shop
             services.AddTransient<IProductRepository,ProductRepository>();
             services.AddTransient<ICategoryRepository,CategoryRepository>();
             services.AddTransient<IUnitOfWork,UnitOfWork>();
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
 
+            //services.AddAutoMapper(typeof(AutoMapperProfile));
+            //services.AddRazorPages();
+            //services.AddMvc(options =>
+            //{
+            //    options.EnableEndpointRouting = false;
+            //});
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,20 +55,36 @@ namespace Shop
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseSession();
             app.UseAuthentication();
+
+            //app.UseMvc(routes => 
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller}/{action}/{id?}")
+            //
+            //);
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Product}/{action=GetProductsAsync}/{id?}");
+                //endpoints.MapControllers();
+               //endpoints.MapControllerRoute("default", "{controller=Product}/{action=GetProductsAsync}");
             });
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //   
+            //    endpoints.MapGet("/", async context =>
+            //    {
+            //        await context.Response.WriteAsync("Hello World!");
+            //    });
+            //});
         }
     }
 }

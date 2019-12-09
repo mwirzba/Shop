@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shop.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Shop.Data.Repositories
 {
@@ -8,14 +9,14 @@ namespace Shop.Data.Repositories
     {
         public ProductRepository(ApplicationDbContext context) : base(context){ }
 
-        public IEnumerable<Product> GetProductsWthCategories()
+        public async Task<IEnumerable<Product>> GetProductsWthCategoriesAsync()
         {
-            return ApplicationDbContext.Products.Include(a => a.Category);
+            return await ApplicationDbContext.Products.Include(a => a.Category).ToListAsync();
         }
 
         public ApplicationDbContext ApplicationDbContext
         {
-            get { return Context as ApplicationDbContext; }
+            get { return context as ApplicationDbContext; }
         }
     }
 }

@@ -1,49 +1,55 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Shop.Data.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly DbSet<TEntity> _entities;
-        protected readonly DbContext Context;
+        protected readonly DbContext context;
         public Repository(DbContext context)
         {
-            Context = context;
-            _entities = Context.Set<TEntity>();
+            this.context = context;
+            _entities = this.context.Set<TEntity>();
         }
 
-        public TEntity Get(int id)
+        public async Task<TEntity> GetAsync(int id)
         {
-            return _entities.Find(id);
+            return await _entities.FindAsync(id);
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return _entities.ToList();
+            return await _entities.ToListAsync();
         }
 
-        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> FindAsync(Func<TEntity, Task<bool>> predicate)
         {
-            return _entities.Where(predicate);
+            return await _entities.WhereAsync(predicate);
         }
 
-        public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return _entities.SingleOrDefault(predicate);
+            return await _entities.SingleOrDefaultAsync(predicate);
         }
 
-        public void Add(TEntity entity)
+        public async Task AddAsync(TEntity entity)
         {
-            _entities.Add(entity);
+            await _entities.AddAsync(entity);
         }
 
-        public void AddRange(IEnumerable<TEntity> entities)
+        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
-            _entities.AddRange(entities);
+            await _entities.AddRangeAsync(entities);
+        }
+
+        public void Update(TEntity entityToUpdate)
+        {
+            _entities.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
         public void Remove(TEntity entity)
@@ -55,5 +61,6 @@ namespace Shop.Data.Repositories
         {
             _entities.RemoveRange(entities);
         }
+
     }
 }

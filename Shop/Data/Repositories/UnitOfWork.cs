@@ -1,7 +1,10 @@
 ﻿
+using System;
+using System.Threading.Tasks;
+
 namespace Shop.Data.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly ApplicationDbContext _context;
         public UnitOfWork(ApplicationDbContext context)
@@ -10,18 +13,35 @@ namespace Shop.Data.Repositories
             Products = new ProductRepository(_context);
             Categories = new CategoryRepository(_context);
         }
-        public IProductRepository Products { get; }
+        public ProductRepository Products { get; }
 
-        public ICategoryRepository Categories { get; }
+        public CategoryRepository Categories { get; }
 
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return _context.SaveChanges();
+            return await _context.SaveChangesAsync();
         }
 
         public void Dispose()
         {
-            _context.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+            //_context.Dispose();
         }
+
+        private bool disposed = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            disposed = true;
+        }
+
+       
     }
 }

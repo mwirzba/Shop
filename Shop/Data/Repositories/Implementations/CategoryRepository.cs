@@ -8,7 +8,7 @@ namespace Shop.Data.Repositories
         public CategoryRepository(ApplicationDbContext context) : base(context) { }
         public ApplicationDbContext ApplicationDbContext
         {
-            get { return Context as ApplicationDbContext; }
+            get { return context as ApplicationDbContext; }
         }
     }
 }
