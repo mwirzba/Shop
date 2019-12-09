@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Data.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository :IRepository<Product>
     {
         Task<IEnumerable<Product>> GetProductsWthCategoriesAsync();
 

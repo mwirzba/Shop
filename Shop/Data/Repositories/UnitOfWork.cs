@@ -13,9 +13,9 @@ namespace Shop.Data.Repositories
             Products = new ProductRepository(_context);
             Categories = new CategoryRepository(_context);
         }
-        public ProductRepository Products { get; }
+        public IProductRepository Products { get; }
 
-        public CategoryRepository Categories { get; }
+        public ICategoryRepository Categories { get; }
 
         public async Task<int> CompleteAsync()
         {

@@ -1,7 +1,9 @@
 ﻿
+using Shop.Models;
+
 namespace Shop.Data.Repositories
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository : IRepository<Category>
     {
     }
 }

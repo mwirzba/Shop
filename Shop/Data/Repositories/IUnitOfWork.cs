@@ -5,8 +5,8 @@ namespace Shop.Data.Repositories
 {
     public interface IUnitOfWork
     {
-        ProductRepository Products { get; }
-        CategoryRepository Categories { get; }
+        IProductRepository Products { get; }
+        ICategoryRepository Categories { get; }
         Task<int> CompleteAsync();
         
     }
