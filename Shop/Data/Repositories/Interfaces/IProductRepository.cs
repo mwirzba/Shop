@@ -7,6 +7,6 @@ namespace Shop.Data.Repositories
     public interface IProductRepository :IRepository<Product>
     {
         Task<IEnumerable<Product>> GetProductsWthCategoriesAsync();
-
+        Task<Product> GetProductWthCategorieAsync(int id);
     }
 }

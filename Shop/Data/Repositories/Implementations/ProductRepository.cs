@@ -14,6 +14,13 @@ namespace Shop.Data.Repositories
             return await ApplicationDbContext.Products.Include(a => a.Category).ToListAsync();
         }
 
+        public async Task<Product> GetProductWthCategorieAsync(int id)
+        {
+            return await ApplicationDbContext.Products.
+                Include(a => a.Category).
+                FirstOrDefaultAsync(p=>p.Id == id);
+        }
+
         public ApplicationDbContext ApplicationDbContext
         {
             get { return context as ApplicationDbContext; }
