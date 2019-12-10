@@ -22,13 +22,13 @@ namespace Shop.Tests
             _productRepo = new Mock<IProductRepository>();
             _categoriesRepo = new Mock<ICategoryRepository>();
             _mock = GetConfiguredMockObject();
-            _productController = new ProductController(_mock.Object, new Mapper(CreateConfiguration()));
+            _productController = new ProductsController(_mock.Object, new Mapper(CreateConfiguration()));
         }
 
         private Mock<IUnitOfWork> _mock;
         private Mock<IProductRepository> _productRepo;
         private Mock<ICategoryRepository> _categoriesRepo;
-        private ProductController _productController;
+        private ProductsController _productController;
 
 
         private MapperConfiguration CreateConfiguration()
@@ -100,7 +100,7 @@ namespace Shop.Tests
         public async Task Can_Update_Product()
         {
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
-            ProductController productController = new ProductController(mock.Object, new Mapper(CreateConfiguration()));
+            ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
             var updatedProduct= new ProductDto { Id = 1, Name = "prodnew", CategoryId = 3 };
            
             var resultFromController = await productController.EditProductAsync(updatedProduct,1);
@@ -113,7 +113,7 @@ namespace Shop.Tests
         public async Task Can_Delete_Product()
         {
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
-            ProductController productController = new ProductController(mock.Object, new Mapper(CreateConfiguration()));
+            ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
             var resultFromController = await productController.DeleteProductAsync(1);
             var okResult = resultFromController as NoContentResult;
 
@@ -121,10 +121,10 @@ namespace Shop.Tests
         }
 
         [Test]
-        public async Task Can_Validate_Wrong_Product()
+        public void Can_Validate_Wrong_Product()
         {
             var invalidProduct = new ProductDto { Name = "", Id = 1 , Price =-1};
-            ProductController productController = new ProductController(_mock.Object, new Mapper(CreateConfiguration()));
+            ProductsController productController = new ProductsController(_mock.Object, new Mapper(CreateConfiguration()));
             var validationResults = new List<ValidationResult>();
             var isValid = Validator.TryValidateObject(invalidProduct, new System.ComponentModel.DataAnnotations.ValidationContext(invalidProduct), validationResults);
             Assert.IsFalse(isValid);

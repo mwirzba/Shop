@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -26,9 +27,9 @@ namespace Shop.Data.Repositories
             return await _entities.ToListAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> FindAsync(Func<TEntity, Task<bool>> predicate)
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _entities.WhereAsync(predicate);
+            return await _entities.Where(predicate).ToListAsync(); 
         }
 
         public async Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
