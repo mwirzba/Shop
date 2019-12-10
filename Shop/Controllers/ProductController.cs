@@ -58,7 +58,7 @@ namespace Shop.Controllers
 
         [HttpPut]
         [Route("products/edit/{id}")]
-        public async Task<IActionResult> PutProductAsync([FromBody]ProductDto product,int id)
+        public async Task<IActionResult> EditProductAsync([FromBody]ProductDto product,int id)
         {
             var productInDb = await _unitOfWork.Products.GetProductWthCategorieAsync(id);
             if (productInDb == null)
