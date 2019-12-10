@@ -15,16 +15,16 @@ namespace Shop.Models
         public byte CategoryId { get; set; }
         public virtual Category Category { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            var cmpProduct = (Product)obj;
-            if (Name == cmpProduct.Name 
-                && Description == cmpProduct.Description
-                && Price == cmpProduct.Price
-                && CategoryId == cmpProduct.CategoryId)
-                return true;
-            return false;
-        }
+        //public override bool Equals(object obj)
+        //{
+        //    var cmpProduct = (Product)obj;
+        //    if (Name == cmpProduct.Name 
+        //        && Description == cmpProduct.Description
+        //        && Price == cmpProduct.Price
+        //        && CategoryId == cmpProduct.CategoryId)
+        //        return true;
+        //    return false;
+        //}
 
     }
 }

@@ -8,6 +8,7 @@ using Shop.Data.Repositories;
 using Shop.Models;
 using Shop.Models.ProductDtos;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace Shop.Tests
@@ -72,7 +73,7 @@ namespace Shop.Tests
             var resultFromController = await _productController.GetProductsAsync();
             var okResult = resultFromController as OkObjectResult;
 
-            Assert.IsTrue(okResult != null && okResult.StatusCode == 200);
+            Assert.IsTrue(okResult != null && okResult.StatusCode == Microsoft.AspNetCore.Http.StatusCodes.Status200OK);
         }
 
         [Test]
@@ -81,19 +82,17 @@ namespace Shop.Tests
             var resultFromController = await _productController.GetProductAsync(1);
             var okResult = resultFromController as OkObjectResult;
 
-            Assert.IsTrue(okResult != null && okResult.StatusCode == 200);
+            Assert.IsTrue(okResult != null && okResult.StatusCode == Microsoft.AspNetCore.Http.StatusCodes.Status200OK);
         }
 
         [Test]
         public async Task Can_Add_Product()
         {
-            var product = new Product { Id = 3, Name = "Prod3", CategoryId = 1 };
-            var productDto  = new ProductDto { Id = 3, Name = "Prod3", CategoryId = 1 };
+            var productDto  = new ProductDto { Id = 3,Price=-1, CategoryId = 1 };
 
             var resultFromController = await _productController.PostProductAsync(productDto);
             var okResult = resultFromController as OkResult;
-
-            Assert.IsTrue(okResult != null && okResult.StatusCode == 200);
+            Assert.IsTrue(okResult !=null && okResult.StatusCode == Microsoft.AspNetCore.Http.StatusCodes.Status200OK);
         }
 
 
@@ -104,10 +103,10 @@ namespace Shop.Tests
             ProductController productController = new ProductController(mock.Object, new Mapper(CreateConfiguration()));
             var updatedProduct= new ProductDto { Id = 1, Name = "prodnew", CategoryId = 3 };
            
-            var resultFromController = await productController.EditProductAsync(updatedProduct, 1);
-            var okResult = resultFromController as OkResult;
+            var resultFromController = await productController.EditProductAsync(updatedProduct,1);
+            var okResult = resultFromController as NoContentResult;
 
-            Assert.IsTrue(okResult != null && okResult.StatusCode == 200);
+            Assert.IsTrue(okResult != null && okResult.StatusCode == Microsoft.AspNetCore.Http.StatusCodes.Status204NoContent);
         }
 
         [Test]
@@ -116,10 +115,19 @@ namespace Shop.Tests
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
             ProductController productController = new ProductController(mock.Object, new Mapper(CreateConfiguration()));
             var resultFromController = await productController.DeleteProductAsync(1);
-            var okResult = resultFromController as OkResult;
+            var okResult = resultFromController as NoContentResult;
 
-            Assert.IsTrue(okResult != null && okResult.StatusCode == 200);
+            Assert.IsTrue(okResult != null && okResult.StatusCode == Microsoft.AspNetCore.Http.StatusCodes.Status204NoContent);
         }
 
+        [Test]
+        public async Task Can_Validate_Wrong_Product()
+        {
+            var invalidProduct = new ProductDto { Name = "", Id = 1 , Price =-1};
+            ProductController productController = new ProductController(_mock.Object, new Mapper(CreateConfiguration()));
+            var validationResults = new List<ValidationResult>();
+            var isValid = Validator.TryValidateObject(invalidProduct, new System.ComponentModel.DataAnnotations.ValidationContext(invalidProduct), validationResults);
+            Assert.IsFalse(isValid);
+        }
     }
 }
