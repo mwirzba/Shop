@@ -20,8 +20,11 @@ namespace Shop
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
+
+
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["Data:StoreDb:connectionString"]));
@@ -40,6 +43,12 @@ namespace Shop
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
 
             //services.AddAutoMapper(typeof(AutoMapperProfile));
             //services.AddRazorPages();
@@ -55,18 +64,14 @@ namespace Shop
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("MyPolicy");
+
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseAuthentication();
 
-            //app.UseMvc(routes => 
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller}/{action}/{id?}")
-            //
-            //);
 
             app.UseEndpoints(endpoints =>
             {
@@ -77,14 +82,6 @@ namespace Shop
                //endpoints.MapControllerRoute("default", "{controller=Product}/{action=GetProductsAsync}");
             });
 
-            //app.UseEndpoints(endpoints =>
-            //{
-            //   
-            //    endpoints.MapGet("/", async context =>
-            //    {
-            //        await context.Response.WriteAsync("Hello World!");
-            //    });
-            //});
         }
     }
 }
