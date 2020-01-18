@@ -10,14 +10,14 @@ using Shop.Data;
 namespace Shop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191209010434_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200118214349_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.1")
+                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -223,11 +223,47 @@ namespace Shop.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
+
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "Laptops"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "Televisions"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            Name = "Desktops"
+                        },
+                        new
+                        {
+                            Id = (byte)4,
+                            Name = "Automation"
+                        },
+                        new
+                        {
+                            Id = (byte)5,
+                            Name = "Digital Cameras"
+                        },
+                        new
+                        {
+                            Id = (byte)6,
+                            Name = "Cell Phones"
+                        });
                 });
 
             modelBuilder.Entity("Shop.Models.Product", b =>
@@ -237,7 +273,7 @@ namespace Shop.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte?>("CategoryId")
+                    b.Property<byte>("CategoryId")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Description")
@@ -254,6 +290,40 @@ namespace Shop.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = (byte)1,
+                            Description = "The 13-inch MacBook Air features 8GB of memory, a fifth-generation Intel Core processor, Thunderbolt 2, great built-in apps and all-day battery life.* It’s thin, light and durable enough to take everywhere you go -- and powerful enough to do everything once you get there.",
+                            Name = "Apple MacBook Air 13.3",
+                            Price = 1.199m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryId = (byte)1,
+                            Description = "The Lenovo 15.6 laptop offers portable computing packaged in a compact size. It features a 2133 MHz DDR4 RAM and Intel Pentium Gold 5405Uprocessor which consume less power, reducing heat and extending battery life. This laptop offers great picture quality while viewing photos and videos along with excellent sound performance.",
+                            Name = "Lenovo 15.6\"",
+                            Price = 549.99m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CategoryId = (byte)3,
+                            Description = "Powerful, lag-free gaming is easily experienced with the Acer Nitro gaming PC. This compact design boasts a 2.9GHz Intel Core i5-9400F processor with 8GB RAM, and large 1TB HDD for storing all your digital files. The NVIDIA GeForce GTX 1050 graphics card with 2GB of dedicated memory offers smooth gaming and graphic-intensive tasking.",
+                            Name = "Acer Nitro Gaming PC",
+                            Price = 999.99m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CategoryId = (byte)6,
+                            Description = "EAD SELLER'S STORE DESCRIPTION FOR MORE INFO. Open Box: Unused, 10/10 condition product with full warranty still valid, only difference with Factory Fresh is open packaging.",
+                            Name = "Samsung Galaxy Note10+ 256GB ",
+                            Price = 899.99m
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -311,7 +381,9 @@ namespace Shop.Migrations
                 {
                     b.HasOne("Shop.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

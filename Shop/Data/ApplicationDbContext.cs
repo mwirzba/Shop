@@ -7,8 +7,72 @@ using System.Collections.Generic;
 namespace Shop.Data{
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
+        public ApplicationDbContext(DbContextOptions options) : base(options) {}
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Product>().HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Category>()
+                .HasIndex(i => i.Name)
+                .IsUnique();
+
+            builder.Entity<Category>().HasData(
+                   new Category { Id = 1, Name = "Laptops" },
+                   new Category { Id = 2, Name = "Televisions" },
+                   new Category { Id = 3, Name = "Desktops" },
+                   new Category { Id = 4, Name = "Automation" },
+                   new Category { Id = 5, Name = "Digital Cameras" },
+                   new Category { Id = 6, Name = "Cell Phones" }
+           );
+
+            builder.Entity<Product>().HasData(
+
+                  new Product { Id = 1,
+                      Name = "Apple MacBook Air 13.3", 
+                      CategoryId =1, 
+                      Description= "The 13-inch MacBook Air features 8GB of memory, " +
+                                   "a fifth-generation Intel Core processor, Thunderbolt 2, great built-in apps and all-day battery life.* It’s thin, light " +
+                                   "and durable enough to take everywhere you go -- and powerful enough to do everything once you get there.",
+                      Price = 1.199M 
+                  },
+
+                  new Product
+                  {
+                      Id = 2,
+                      Name = "Lenovo 15.6\"",
+                      CategoryId = 1,
+                      Description = "The Lenovo 15.6 laptop offers portable computing packaged in a compact size." +
+                      " It features a 2133 MHz DDR4 RAM and Intel Pentium Gold 5405Uprocessor which consume less power, reducing heat and extending battery life. " +
+                      "This laptop offers great picture quality while viewing photos and videos along with excellent sound performance.",
+                      Price = 549.99M
+                  },
+                 new Product
+                 {
+                     Id = 3,
+                     Name = "Acer Nitro Gaming PC",
+                     CategoryId = 3,
+                     Description = "Powerful, lag-free gaming is easily experienced with the Acer Nitro gaming PC." +
+                     " This compact design boasts a 2.9GHz Intel Core i5-9400F processor with 8GB RAM, and large 1TB HDD for storing all your digital files. " +
+                     "The NVIDIA GeForce GTX 1050 graphics card with 2GB of dedicated memory offers smooth gaming and graphic-intensive tasking.",
+                     Price = 999.99M
+                 },
+                 new Product
+                 {
+                     Id = 4,
+                     Name = "Samsung Galaxy Note10+ 256GB ",
+                     CategoryId = 6,
+                     Description = "EAD SELLER'S STORE DESCRIPTION FOR MORE INFO. Open Box: Unused, " +
+                     "10/10 condition product with full warranty still valid, only difference with Factory Fresh is open packaging.",
+                     Price = 899.99M
+                 }
+            );
+
+        }
     }
 }

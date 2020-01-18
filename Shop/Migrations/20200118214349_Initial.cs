@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Shop.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -173,7 +173,7 @@ namespace Shop.Migrations
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Price = table.Column<decimal>(nullable: false),
-                    CategoryId = table.Column<byte>(nullable: true)
+                    CategoryId = table.Column<byte>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -183,7 +183,31 @@ namespace Shop.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { (byte)1, "Laptops" },
+                    { (byte)2, "Televisions" },
+                    { (byte)3, "Desktops" },
+                    { (byte)4, "Automation" },
+                    { (byte)5, "Digital Cameras" },
+                    { (byte)6, "Cell Phones" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CategoryId", "Description", "Name", "Price" },
+                values: new object[,]
+                {
+                    { 1, (byte)1, "The 13-inch MacBook Air features 8GB of memory, a fifth-generation Intel Core processor, Thunderbolt 2, great built-in apps and all-day battery life.* It’s thin, light and durable enough to take everywhere you go -- and powerful enough to do everything once you get there.", "Apple MacBook Air 13.3", 1.199m },
+                    { 2, (byte)1, "The Lenovo 15.6 laptop offers portable computing packaged in a compact size. It features a 2133 MHz DDR4 RAM and Intel Pentium Gold 5405Uprocessor which consume less power, reducing heat and extending battery life. This laptop offers great picture quality while viewing photos and videos along with excellent sound performance.", "Lenovo 15.6\"", 549.99m },
+                    { 3, (byte)3, "Powerful, lag-free gaming is easily experienced with the Acer Nitro gaming PC. This compact design boasts a 2.9GHz Intel Core i5-9400F processor with 8GB RAM, and large 1TB HDD for storing all your digital files. The NVIDIA GeForce GTX 1050 graphics card with 2GB of dedicated memory offers smooth gaming and graphic-intensive tasking.", "Acer Nitro Gaming PC", 999.99m },
+                    { 4, (byte)6, "EAD SELLER'S STORE DESCRIPTION FOR MORE INFO. Open Box: Unused, 10/10 condition product with full warranty still valid, only difference with Factory Fresh is open packaging.", "Samsung Galaxy Note10+ 256GB ", 899.99m }
                 });
 
             migrationBuilder.CreateIndex(
@@ -224,6 +248,13 @@ namespace Shop.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_Name",
+                table: "Categories",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
