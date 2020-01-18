@@ -38,19 +38,17 @@ namespace Shop.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDto>> GetCategory(byte id)
         {
-            var categoryInDb = await _unitOfWork.Categories.GetAsync(id);
+            var categoryInDb = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
 
             if (categoryInDb == null)
             {
                 return NotFound();
             }
 
-            return _mapper.Map<Category,CategoryDto>(categoryInDb);
+            return Ok(_mapper.Map<Category,CategoryDto>(categoryInDb));
         }
 
-        // PUT: api/Categories/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(byte id, CategoryDto category)
         {
@@ -80,11 +78,8 @@ namespace Shop.Controllers
             return NoContent();
         }
 
-        // POST: api/Categories
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
+        public async Task<ActionResult> PostCategory(Category category)
         {
             await _unitOfWork.Categories.AddAsync(category);
             try
@@ -99,18 +94,18 @@ namespace Shop.Controllers
                 }
                 else
                 {
-                    throw;
+                    return BadRequest();
                 }
             }
 
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+            return Ok();
         }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Category>> DeleteCategory(byte id)
+        public async Task<ActionResult> DeleteCategory(byte id)
         {
-            var category = await _unitOfWork.Categories.GetAsync(id);
+            var category = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -119,7 +114,7 @@ namespace Shop.Controllers
             _unitOfWork.Categories.Remove(category);
             await _unitOfWork.CompleteAsync();
 
-            return category;
+            return Ok();
         }
 
         private async Task<bool> CategoryExists(byte id)

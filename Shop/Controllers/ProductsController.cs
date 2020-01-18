@@ -76,7 +76,7 @@ namespace Shop.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
-            var productInDb = await _unitOfWork.Products.GetProductWthCategorieAsync(id);
+            var productInDb = await _unitOfWork.Products.GetAsync(id);
             if (productInDb == null)
                 return NotFound();
 
