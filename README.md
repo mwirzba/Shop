@@ -1,5 +1,5 @@
 # Shop
-API created in ASP.NET Core 3.0
+Rest API created in ASP.NET Core 3.0
 
 Used:
 ,repository pattern
