@@ -15,7 +15,6 @@ namespace Shop.Data.Repositories
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
-        public void Update(TEntity entityToUpdate);
     }
 
 }

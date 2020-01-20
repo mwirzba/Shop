@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Shop.Models.ProductDtos;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Shop.Controllers
 {
@@ -21,12 +22,13 @@ namespace Shop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostProductAsync([FromBody]ProductDto product)
+        public async Task<IActionResult> PostProductAsync(ProductDto product)
         {
-            if (product == null || !ModelState.IsValid)
+            if (product == null)
                 return BadRequest();
 
             var productToSave = _mapper.Map<ProductDto, Product>(product);
+
 
             await _unitOfWork.Products.AddAsync(productToSave);
             await _unitOfWork.CompleteAsync();
@@ -37,8 +39,8 @@ namespace Shop.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProductsAsync()
         {
-            var productsInDb = await _unitOfWork.Products.GetProductsWthCategoriesAsync();
-            if (productsInDb == null)
+            var productsInDb = (List<Product>) await _unitOfWork.Products.GetProductsWthCategoriesAsync();
+            if (productsInDb==null)
                 return NotFound();
             var productsDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(productsInDb);
             return Ok(productsDto);
@@ -48,17 +50,17 @@ namespace Shop.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductAsync(int id)
         {
-        var productInDb = await _unitOfWork.Products.GetProductWthCategorieAsync(id);
-        if (productInDb == null)
-            return NotFound();
-        var productDto = _mapper.Map<Product, ProductDto>(productInDb);
-        return Ok(productDto);
+            var productInDb = await _unitOfWork.Products.GetProductWthCategorieAsync(id);
+            if (productInDb == null)
+                return NotFound();
+            var productDto = _mapper.Map<Product, ProductDto>(productInDb);
+            return Ok(productDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditProductAsync([FromBody]ProductDto product,int id)
+        public async Task<IActionResult> EditProductAsync(ProductDto product,int id)
         {
-            if (product == null || !ModelState.IsValid)
+            if (product == null)
                 return BadRequest();
 
             var productInDb = await _unitOfWork.Products.GetProductWthCategorieAsync(id);
@@ -67,7 +69,9 @@ namespace Shop.Controllers
                 return NotFound();
 
             _mapper.Map(product,productInDb);
-            _unitOfWork.Products.Update(productInDb);
+
+
+            //_unitOfWork.Products.Update(productInDb);
             await _unitOfWork.CompleteAsync();
          
             return NoContent();

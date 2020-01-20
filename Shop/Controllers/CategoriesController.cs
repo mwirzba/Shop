@@ -56,8 +56,8 @@ namespace Shop.Controllers
             {
                 return BadRequest();
             }
+            
             var categoryToSave = _mapper.Map<CategoryDto, Category>(category);
-            _unitOfWork.Categories.Update(categoryToSave);
 
             try
             {

@@ -47,11 +47,6 @@ namespace Shop.Data.Repositories
             await _entities.AddRangeAsync(entities);
         }
 
-        public void Update(TEntity entityToUpdate)
-        {
-            _entities.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
-        }
 
         public void Remove(TEntity entity)
         {
