@@ -24,9 +24,9 @@ namespace Shop.Models
 
         public bool IsNameUnique(CategoryDto category, string newValue)
         {
-            var categoryInDb = categories.FirstOrDefault(c => c.Name == newValue);
+            var categoryInDb = categories.FirstOrDefault(c => c.Name == newValue && c.Id != category.Id);
 
-            if (category == null)
+            if (categoryInDb == null)
                 return true;
             return false;
             

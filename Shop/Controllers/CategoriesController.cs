@@ -108,7 +108,7 @@ namespace Shop.Controllers
             _unitOfWork.Categories.Remove(category);
             await _unitOfWork.CompleteAsync();
 
-            return Ok();
+            return NoContent();
         }
 
     }
