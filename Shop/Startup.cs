@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -35,6 +36,8 @@ namespace Shop
             services.AddTransient<IProductRepository,ProductRepository>();
             services.AddTransient<ICategoryRepository,CategoryRepository>();
             services.AddTransient<IUnitOfWork,UnitOfWork>();
+
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AutoMapperProfile());
@@ -49,6 +52,10 @@ namespace Shop
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+
+            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+
 
             //services.AddAutoMapper(typeof(AutoMapperProfile));
             //services.AddRazorPages();

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="3.0.1">
       <AllowExplicitVersion>true</AllowExplicitVersion>
     </PackageReference>
@@ -24,7 +25,6 @@
 
   <ItemGroup>
     <Folder Include="Identity\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

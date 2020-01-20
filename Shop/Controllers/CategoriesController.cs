@@ -27,7 +27,7 @@ namespace Shop.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories()
+        public async Task<IActionResult> GetCategories()
         {
             var categoryInDb = await _unitOfWork.Categories.GetAllAsync();
             var categoryDto = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryDto>>(categoryInDb);
@@ -36,7 +36,7 @@ namespace Shop.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryDto>> GetCategory(byte id)
+        public async Task<IActionResult> GetCategory(byte id)
         {
             var categoryInDb = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
 
@@ -52,50 +52,44 @@ namespace Shop.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(byte id, CategoryDto category)
         {
-            if (id != category.Id)
+            if (category == null)
             {
                 return BadRequest();
             }
-            
-            var categoryToSave = _mapper.Map<CategoryDto, Category>(category);
+
+            var categoryInDb = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
+
+            if (categoryInDb == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(category,categoryInDb);
 
             try
             {
                 await _unitOfWork.CompleteAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateException e)
             {
-                if (await CategoryExists(id)==false)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(e.Message);
             }
 
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostCategory(Category category)
+        public async Task<IActionResult> PostCategory(CategoryDto category)
         {
-            await _unitOfWork.Categories.AddAsync(category);
+            var categoryToSave = _mapper.Map<CategoryDto,Category>(category);
+            await _unitOfWork.Categories.AddAsync(categoryToSave);
             try
             {
                 await _unitOfWork.CompleteAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
-                if (await CategoryExists(category.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                 return BadRequest(e.Message);
             }
 
             return Ok();
@@ -103,7 +97,7 @@ namespace Shop.Controllers
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCategory(byte id)
+        public async Task<IActionResult> DeleteCategory(byte id)
         {
             var category = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
             if (category == null)
@@ -115,14 +109,6 @@ namespace Shop.Controllers
             await _unitOfWork.CompleteAsync();
 
             return Ok();
-        }
-
-        private async Task<bool> CategoryExists(byte id)
-        {
-            var rtn =  await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
-            if (rtn == null)
-                return false;
-            return true;
         }
 
     }

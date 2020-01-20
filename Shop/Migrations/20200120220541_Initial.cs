@@ -50,7 +50,8 @@ namespace Shop.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<byte>(nullable: false),
+                    Id = table.Column<byte>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

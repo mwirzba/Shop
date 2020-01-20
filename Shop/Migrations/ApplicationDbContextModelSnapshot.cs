@@ -218,7 +218,9 @@ namespace Shop.Migrations
             modelBuilder.Entity("Shop.Models.Category", b =>
                 {
                     b.Property<byte>("Id")
-                        .HasColumnType("tinyint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(450)");

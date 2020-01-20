@@ -185,7 +185,7 @@ namespace Shop.Tests
             ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
             var updatedProduct= new ProductDto { Id = 1, Name = "prodnew", CategoryId = 3 };
            
-            var resultFromController = await productController.EditProductAsync(updatedProduct,1);
+            var resultFromController = await productController.PutProductAsync(updatedProduct,1);
             var okResult = resultFromController as NoContentResult;
 
             Assert.IsNotNull(okResult);

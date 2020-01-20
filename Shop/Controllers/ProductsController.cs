@@ -6,6 +6,7 @@ using AutoMapper;
 using Shop.Models.ProductDtos;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shop.Controllers
 {
@@ -25,13 +26,20 @@ namespace Shop.Controllers
         public async Task<IActionResult> PostProductAsync(ProductDto product)
         {
             if (product == null)
-                return BadRequest();
+                return BadRequest();           
 
             var productToSave = _mapper.Map<ProductDto, Product>(product);
-
-
             await _unitOfWork.Products.AddAsync(productToSave);
-            await _unitOfWork.CompleteAsync();
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateException)
+            {
+                 return BadRequest();
+            }
+
             return Ok();
         }
 
@@ -58,7 +66,7 @@ namespace Shop.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditProductAsync(ProductDto product,int id)
+        public async Task<IActionResult> PutProductAsync(ProductDto product,int id)
         {
             if (product == null)
                 return BadRequest();
