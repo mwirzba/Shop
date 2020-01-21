@@ -16,6 +16,9 @@ namespace Shop.Data
             CreateMap<CategoryDto, Category>()
                 .ForMember(c => c.Products, opt => opt.Ignore())
                   .ForMember(p => p.Id, opt => opt.Ignore());
+
+            CreateMap<UserDto, User>();
+            CreateMap<User, UserDto>();
         }
     }
 }

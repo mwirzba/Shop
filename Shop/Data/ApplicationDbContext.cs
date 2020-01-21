@@ -5,7 +5,7 @@ using Shop.Models;
 using System.Collections.Generic;
 
 namespace Shop.Data{
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions options) : base(options) {}
         public DbSet<Product> Products { get; set; }

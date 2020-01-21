@@ -18,8 +18,7 @@ namespace Shop.Models
               .MinimumLength(2)
               .MaximumLength(20)
               .Must(IsNameUnique)
-              .WithMessage("Invalid category name");
-              
+              .WithMessage("Invalid category name");   
         }
 
         public bool IsNameUnique(CategoryDto category, string newValue)
