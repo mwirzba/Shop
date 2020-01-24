@@ -6,11 +6,11 @@ Durning project I lerned important skills in  backend - frontent contact.
 
 
 Used:
-* repository pattern
-* dto to pass data beetwen frontend and backend
-* automapper
-* fluent validation
-* unit testing with NUnit and Moq 
-* dependecy injection
-* token authentication
+* Entity Framework with generic repository pattern
+* Dto
+* Automapper
+* Fluent validation
+* Unit testing with NUnit and Moq 
+* Dependecy injection
+* Token authentication
 
