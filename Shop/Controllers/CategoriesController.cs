@@ -27,6 +27,8 @@ namespace Shop.Controllers
         public async Task<IActionResult> GetCategories()
         {
             var categoryInDb = await _unitOfWork.Categories.GetAllAsync();
+            if (categoryInDb == null)
+                return NotFound();
             var categoryDto = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryDto>>(categoryInDb);
             return Ok(categoryDto);
         }
