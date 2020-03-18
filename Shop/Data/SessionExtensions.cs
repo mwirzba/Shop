@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Data
 {
+    /*
     public static class SessionExtensions
     {
         public static void SetJson(this ISession session, string key, object value)
@@ -19,5 +20,5 @@ namespace Shop.Data
             var sessionData = session.GetString(key);
             return sessionData == null ? default(T) : JsonConvert.DeserializeObject<T>(sessionData);
         }
-    }
+    }*/
 }

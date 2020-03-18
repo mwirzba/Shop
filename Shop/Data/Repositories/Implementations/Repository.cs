@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Data.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<TEntity,TId> : IRepository<TEntity,TId> where TEntity : class
     {
         private readonly DbSet<TEntity> _entities;
         protected readonly DbContext context;
@@ -17,7 +17,7 @@ namespace Shop.Data.Repositories
             _entities = this.context.Set<TEntity>();
         }
 
-        public async Task<TEntity> GetAsync(int id)
+        public async Task<TEntity> GetAsync(TId id)
         {
             return await _entities.FindAsync(id);
         }

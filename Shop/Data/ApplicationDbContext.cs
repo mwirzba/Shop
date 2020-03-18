@@ -10,17 +10,42 @@ namespace Shop.Data{
         public ApplicationDbContext(DbContextOptions options) : base(options) {}
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<CartLine> CartLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<Product>().HasOne(p => p.Category)
+            builder.Entity<Product>()
+                .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Product>()
+                .HasMany(cl => cl.CartLines)
+                .WithOne(p => p.Product);               
 
             builder.Entity<Category>()
                 .HasIndex(i => i.Name)
                 .IsUnique();
+            
+            builder.Entity<CartLine>()
+                .HasOne(o => o.Order)
+                .WithMany(cl => cl.CartLines)
+                .IsRequired();
+                       
+            builder.Entity<Order>().HasData(
+                new Order {  Id = 1 , Name = "name1" }
+            );
+
+            builder.Entity<CartLine>().HasData(
+                new CartLine { 
+                    Id = 1,
+                    ProductId = 1,
+                    OrderId = 1
+                }
+             );
+
 
             builder.Entity<Category>().HasData(
                    new Category { Id = 1, Name = "Laptops" },
@@ -30,6 +55,8 @@ namespace Shop.Data{
                    new Category { Id = 5, Name = "Digital Cameras" },
                    new Category { Id = 6, Name = "Cell Phones" }
            );
+
+
 
             builder.Entity<Product>().HasData(
 

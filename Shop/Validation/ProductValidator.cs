@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Shop.Models.ProductDtos;
+using Shop.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace Shop.Models
                 .MaximumLength(20);
                 
             RuleFor(product => product.CategoryId)
-                .NotEqual((byte)0);
+                .NotEqual(0);
 
             RuleFor(product => product.Price)
                 .GreaterThan(1)

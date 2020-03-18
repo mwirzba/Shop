@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Shop.Data.Repositories
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
+    public class CategoryRepository : Repository<Category,int>, ICategoryRepository
     {
         public CategoryRepository(ApplicationDbContext context) : base(context) { }
 

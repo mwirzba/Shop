@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-
+using Shop.Dtos;
 
 namespace Shop.Models
 {

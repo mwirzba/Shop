@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Data.Repositories
 {
-    public class ProductRepository : Repository<Product>, IProductRepository
+    public class ProductRepository : Repository<Product,int>, IProductRepository
     {
         public ProductRepository(ApplicationDbContext context) : base(context){ }
 

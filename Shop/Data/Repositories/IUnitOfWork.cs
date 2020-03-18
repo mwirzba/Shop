@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shop.Data.Repositories.Interfaces;
+using System;
 using System.Threading.Tasks;
 
 namespace Shop.Data.Repositories
@@ -7,7 +8,7 @@ namespace Shop.Data.Repositories
     {
         IProductRepository Products { get; }
         ICategoryRepository Categories { get; }
+        IOrderRepository Orders { get; }
         Task<int> CompleteAsync();
-        
     }
 }

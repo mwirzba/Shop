@@ -5,8 +5,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data.Repositories;
+using Shop.Dtos;
 using Shop.Models;
-using Shop.Models.ProductDtos;
 
 namespace Shop.Controllers
 {

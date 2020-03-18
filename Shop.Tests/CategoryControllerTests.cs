@@ -6,11 +6,9 @@ using NUnit.Framework;
 using Shop.Controllers;
 using Shop.Data;
 using Shop.Data.Repositories;
+using Shop.Dtos;
 using Shop.Models;
-using Shop.Models.ProductDtos;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Shop.Tests

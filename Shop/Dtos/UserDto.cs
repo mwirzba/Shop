@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Shop.Models
+namespace Shop.Dtos
 {
     public class UserDto
     {

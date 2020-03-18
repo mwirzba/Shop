@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Shop.Dtos;
 using Shop.Models;
 using System;
 using System.IdentityModel.Tokens.Jwt;

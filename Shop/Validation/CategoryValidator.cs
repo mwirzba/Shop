@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Shop.Data.Repositories;
-using Shop.Models.ProductDtos;
+using Shop.Dtos;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +9,7 @@ namespace Shop.Models
     public class CategoryValidator : AbstractValidator<CategoryDto>
     {
         private List<Category> categories;
+
         public CategoryValidator(IUnitOfWork unitOfWork)
         {
             categories = (List<Category>)unitOfWork.Categories.GetAllAsync().Result;
@@ -18,7 +19,7 @@ namespace Shop.Models
               .MinimumLength(2)
               .MaximumLength(20)
               .Must(IsNameUnique)
-              .WithMessage("Invalid category name");   
+              .WithMessage("Invalid category name");
         }
 
         public bool IsNameUnique(CategoryDto category, string newValue)
@@ -28,7 +29,6 @@ namespace Shop.Models
             if (categoryInDb == null)
                 return true;
             return false;
-            
         }
     }
 }

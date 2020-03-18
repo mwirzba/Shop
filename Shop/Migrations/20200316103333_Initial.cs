@@ -50,13 +50,33 @@ namespace Shop.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<byte>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    SurName = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    State = table.Column<string>(nullable: true),
+                    Zip = table.Column<string>(nullable: true),
+                    Country = table.Column<string>(nullable: true),
+                    GiftWrap = table.Column<bool>(nullable: false),
+                    Status = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -174,7 +194,7 @@ namespace Shop.Migrations
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Price = table.Column<decimal>(nullable: false),
-                    CategoryId = table.Column<byte>(nullable: false)
+                    CategoryId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -187,29 +207,66 @@ namespace Shop.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CartLines",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Quantity = table.Column<int>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
+                    OrderId = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartLines", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartLines_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartLines_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { (byte)1, "Laptops" },
-                    { (byte)2, "Televisions" },
-                    { (byte)3, "Desktops" },
-                    { (byte)4, "Automation" },
-                    { (byte)5, "Digital Cameras" },
-                    { (byte)6, "Cell Phones" }
+                    { 1, "Laptops" },
+                    { 2, "Televisions" },
+                    { 3, "Desktops" },
+                    { 4, "Automation" },
+                    { 5, "Digital Cameras" },
+                    { 6, "Cell Phones" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Orders",
+                columns: new[] { "Id", "City", "Country", "GiftWrap", "Name", "State", "Status", "SurName", "Zip" },
+                values: new object[] { 1L, null, null, false, "name1", null, null, null, null });
 
             migrationBuilder.InsertData(
                 table: "Products",
                 columns: new[] { "Id", "CategoryId", "Description", "Name", "Price" },
                 values: new object[,]
                 {
-                    { 1, (byte)1, "The 13-inch MacBook Air features 8GB of memory, a fifth-generation Intel Core processor, Thunderbolt 2, great built-in apps and all-day battery life.* It’s thin, light and durable enough to take everywhere you go -- and powerful enough to do everything once you get there.", "Apple MacBook Air 13.3", 1.199m },
-                    { 2, (byte)1, "The Lenovo 15.6 laptop offers portable computing packaged in a compact size. It features a 2133 MHz DDR4 RAM and Intel Pentium Gold 5405Uprocessor which consume less power, reducing heat and extending battery life. This laptop offers great picture quality while viewing photos and videos along with excellent sound performance.", "Lenovo 15.6\"", 549.99m },
-                    { 3, (byte)3, "Powerful, lag-free gaming is easily experienced with the Acer Nitro gaming PC. This compact design boasts a 2.9GHz Intel Core i5-9400F processor with 8GB RAM, and large 1TB HDD for storing all your digital files. The NVIDIA GeForce GTX 1050 graphics card with 2GB of dedicated memory offers smooth gaming and graphic-intensive tasking.", "Acer Nitro Gaming PC", 999.99m },
-                    { 4, (byte)6, "EAD SELLER'S STORE DESCRIPTION FOR MORE INFO. Open Box: Unused, 10/10 condition product with full warranty still valid, only difference with Factory Fresh is open packaging.", "Samsung Galaxy Note10+ 256GB ", 899.99m }
+                    { 1, 1, "The 13-inch MacBook Air features 8GB of memory, a fifth-generation Intel Core processor, Thunderbolt 2, great built-in apps and all-day battery life.* It’s thin, light and durable enough to take everywhere you go -- and powerful enough to do everything once you get there.", "Apple MacBook Air 13.3", 1.199m },
+                    { 2, 1, "The Lenovo 15.6 laptop offers portable computing packaged in a compact size. It features a 2133 MHz DDR4 RAM and Intel Pentium Gold 5405Uprocessor which consume less power, reducing heat and extending battery life. This laptop offers great picture quality while viewing photos and videos along with excellent sound performance.", "Lenovo 15.6\"", 549.99m },
+                    { 3, 3, "Powerful, lag-free gaming is easily experienced with the Acer Nitro gaming PC. This compact design boasts a 2.9GHz Intel Core i5-9400F processor with 8GB RAM, and large 1TB HDD for storing all your digital files. The NVIDIA GeForce GTX 1050 graphics card with 2GB of dedicated memory offers smooth gaming and graphic-intensive tasking.", "Acer Nitro Gaming PC", 999.99m },
+                    { 4, 6, "EAD SELLER'S STORE DESCRIPTION FOR MORE INFO. Open Box: Unused, 10/10 condition product with full warranty still valid, only difference with Factory Fresh is open packaging.", "Samsung Galaxy Note10+ 256GB ", 899.99m }
                 });
+
+            migrationBuilder.InsertData(
+                table: "CartLines",
+                columns: new[] { "Id", "OrderId", "ProductId", "Quantity" },
+                values: new object[] { 1L, 1L, 1, 0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -251,6 +308,16 @@ namespace Shop.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartLines_OrderId",
+                table: "CartLines",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartLines_ProductId",
+                table: "CartLines",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Categories_Name",
                 table: "Categories",
                 column: "Name",
@@ -281,13 +348,19 @@ namespace Shop.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "CartLines");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Categories");

@@ -3,11 +3,10 @@ using Shop.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using Shop.Models.ProductDtos;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Shop.Dtos;
 
 namespace Shop.Controllers
 {

@@ -1,4 +1,6 @@
 ﻿
+using Shop.Data.Repositories.Implementations;
+using Shop.Data.Repositories.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -12,10 +14,13 @@ namespace Shop.Data.Repositories
             _context = context;
             Products = new ProductRepository(_context);
             Categories = new CategoryRepository(_context);
+            Orders = new OrderRepository(_context);
         }
         public IProductRepository Products { get; }
 
         public ICategoryRepository Categories { get; }
+
+        public IOrderRepository Orders { get; }
 
         public async Task<int> CompleteAsync()
         {
