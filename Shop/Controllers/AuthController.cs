@@ -35,6 +35,11 @@ namespace Shop.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserDto userDto)
         {
+            var userExists = _userManager.FindByNameAsync(userDto.UserName);
+            if(userExists!=null)
+            {
+                return StatusCode(409, $"User '{userDto.UserName}' already exists.");
+            }
 
             var userToCreate = _mapper.Map<User>(userDto);
 
@@ -42,7 +47,7 @@ namespace Shop.Controllers
 
             if(!result.Succeeded)
             {
-                BadRequest(result.Errors);
+                return BadRequest(result.Errors);
             }
 
             return Ok();

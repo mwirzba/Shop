@@ -1,29 +1,31 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data.Repositories;
-using Shop.Data.Repositories.Interfaces;
+
 using Shop.Dtos;
 using Shop.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Shop.Controllers
 {
+    [ApiController]
     [AllowAnonymous]
     [Route("api/[controller]")]
-    [ApiController]
     public class OrdersController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly UserManager<User> _userManager;
+        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper,
+            UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -42,16 +44,18 @@ namespace Shop.Controllers
             return Ok(orderDto);
         }
 
+
+
         [HttpPost]
         public async Task<IActionResult> PostOrderAsync(OrderDto order)
         {           
-            if (!order.CartLines.Any())
-            {
-                return BadRequest();
-            }
             var orderToSave = _mapper.Map<OrderDto, Order>(order);
-            _mapper.Map(order.CartLines, orderToSave.CartLines);
+            orderToSave.CartLines = (ICollection<CartLine>)_mapper.Map<IEnumerable<CartLineDto>,IEnumerable<CartLine>>(order.CartLines);
             await _unitOfWork.Orders.AddAsync(orderToSave);
+            if (User.Identity.IsAuthenticated)
+            {
+                orderToSave.UserId = _userManager.GetUserId(User);
+            }
             try
             {
                 await _unitOfWork.CompleteAsync();
@@ -66,10 +70,6 @@ namespace Shop.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrderAsync(long id,OrderDto order)
         {
-            if (!order.CartLines.Any())
-            {
-                return BadRequest();
-            }
             var orderInDb = await _unitOfWork.Orders.GetOrderWithLines(id);
             var linesInDb = orderInDb.CartLines;
 

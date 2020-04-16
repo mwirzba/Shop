@@ -10,8 +10,8 @@ using Shop.Models;
 
 namespace Shop.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

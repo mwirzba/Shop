@@ -21,6 +21,8 @@ namespace Shop.Models
 
         public bool GiftWrap { get; set; }
         public string Status { get; set; }
+        public virtual User User { get; set; }
+        public string UserId { get; set; }
         public ICollection<CartLine> CartLines { get; set; }
 
     }

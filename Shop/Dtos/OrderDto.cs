@@ -1,9 +1,6 @@
-﻿using Shop.Data;
-using Shop.Models;
-using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace Shop.Dtos
 {
@@ -24,5 +21,6 @@ namespace Shop.Dtos
         public bool GiftWrap { get; set; }
 
         public string Status { get; set; }
+        public string UserDto { get; set; }
     }
 }
