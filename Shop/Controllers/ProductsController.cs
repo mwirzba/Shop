@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Shop.Dtos;
+using System;
+using Shop.ResponseHelpers;
+using Newtonsoft.Json;
+using Shop.Respn;
 
 namespace Shop.Controllers
 {
@@ -18,6 +22,7 @@ namespace Shop.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
         public ProductsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -28,18 +33,21 @@ namespace Shop.Controllers
         public async Task<IActionResult> PostProductAsync(ProductDto product)
         {
             if (product == null)
-                return BadRequest();           
-
-            var productToSave = _mapper.Map<ProductDto, Product>(product);
-            await _unitOfWork.Products.AddAsync(productToSave);
+                return BadRequest();
 
             try
             {
+                var productToSave = _mapper.Map<ProductDto, Product>(product);
+                await _unitOfWork.Products.AddAsync(productToSave);
                 await _unitOfWork.CompleteAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
-                 return BadRequest();
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
 
             return Ok();
@@ -47,24 +55,68 @@ namespace Shop.Controllers
 
 
         [HttpGet]
+        public async Task<IActionResult> GetProductsByPageAsync([FromQuery]PaginationQuery paginationQuery)
+        {
+            try
+            {
+                var productsInDb = await _unitOfWork.Products.GetPagedProductsAsync(paginationQuery);
+                if (productsInDb == null)
+                    return NotFound();
+                var productsDtoPage = PagedListMapper<Product, ProductDto>.Map(productsInDb, _mapper);
+
+                var metadata = new
+                {
+                    productsDtoPage.TotalCount,
+                    productsDtoPage.PageSize,
+                    productsDtoPage.CurrentPage,
+                    productsDtoPage.TotalPages,
+                    productsDtoPage.HasNext,
+                    productsDtoPage.HasPrevious
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+                return Ok(productsDtoPage);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("all")]
         public async Task<IActionResult> GetProductsAsync()
         {
-            var productsInDb = (List<Product>) await _unitOfWork.Products.GetProductsWthCategoriesAsync();
-            if (productsInDb==null)
-                return NotFound();
-            var productsDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(productsInDb);
-            return Ok(productsDto);
+            try
+            {
+                var productsInDb = await _unitOfWork.Products.GetProductsWthCategoriesAsync();
+                if (productsInDb == null)
+                    return NotFound();
+                var productsDto = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(productsInDb);
+                return Ok(productsDto);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductAsync(int id)
         {
-            var productInDb = await _unitOfWork.Products.GetProductWthCategorieAsync(id);
-            if (productInDb == null)
-                return NotFound();
-            var productDto = _mapper.Map<Product, ProductDto>(productInDb);
-            return Ok(productDto);
+            try
+            {
+                var productInDb = await _unitOfWork.Products.GetProductWthCategorieAsync(id);
+                if (productInDb == null)
+                    return NotFound();
+                var productDto = _mapper.Map<Product, ProductDto>(productInDb);
+                return Ok(productDto);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPut("{id}")]
@@ -79,11 +131,19 @@ namespace Shop.Controllers
                 return NotFound();
 
             _mapper.Map(product,productInDb);
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
-
-            //_unitOfWork.Products.Update(productInDb);
-            await _unitOfWork.CompleteAsync();
-         
             return NoContent();
         }
 
@@ -95,7 +155,19 @@ namespace Shop.Controllers
                 return NotFound();
 
             _unitOfWork.Products.Remove(productInDb);
-            await _unitOfWork.CompleteAsync();
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
             return NoContent();
         }
     }

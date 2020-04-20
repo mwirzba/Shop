@@ -7,6 +7,7 @@ using Shop.Data.Repositories;
 
 using Shop.Dtos;
 using Shop.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace Shop.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+
         public OrdersController(IUnitOfWork unitOfWork, IMapper mapper,
             UserManager<User> userManager)
         {
@@ -31,17 +33,32 @@ namespace Shop.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrdersAsync()
         {
-            var ordersInDb = await _unitOfWork.Orders.GetOrdersWithLines();
-            var ordersDto = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDto>>(ordersInDb);
-            return Ok(ordersDto);
+            try
+            {
+                var ordersInDb = await _unitOfWork.Orders.GetOrdersWithLines();
+                var ordersDto = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDto>>(ordersInDb);
+                return Ok(ordersDto);
+            }
+            catch(Exception)
+            {
+                return BadRequest("Something went wrong");
+            }
+        
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderAsync(long id)
         {
-            var orderInDb = await _unitOfWork.Orders.GetOrderWithLines(id);
-            var orderDto = _mapper.Map<Order,OrderDto>(orderInDb);
-            return Ok(orderDto);
+            try
+            {
+                var orderInDb = await _unitOfWork.Orders.GetOrderWithLines(id);
+                var orderDto = _mapper.Map<Order, OrderDto>(orderInDb);
+                return Ok(orderDto);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Something went wrong");
+            }
         }
 
 
@@ -54,7 +71,9 @@ namespace Shop.Controllers
             await _unitOfWork.Orders.AddAsync(orderToSave);
             if (User.Identity.IsAuthenticated)
             {
-                orderToSave.UserId = _userManager.GetUserId(User);
+                var loggedUser = await _userManager.GetUserAsync(User);
+                orderToSave.UserId = loggedUser.Id;
+                orderToSave.Email = loggedUser.Email;
             }
             try
             {
@@ -64,17 +83,18 @@ namespace Shop.Controllers
             {
                 return BadRequest(e.Message);
             }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderAsync(long id,OrderDto order)
+        public async Task<IActionResult> PutOrderInformationsAsync(long id,OrderDto order)
         {
             var orderInDb = await _unitOfWork.Orders.GetOrderWithLines(id);
-            var linesInDb = orderInDb.CartLines;
-
-            //if(linesInDb.)
-
+            //var linesInDb = orderInDb.CartLines;
 
             _mapper.Map(order, orderInDb);
 
@@ -86,9 +106,14 @@ namespace Shop.Controllers
             {
                 return BadRequest(e.InnerException);
             }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 
+        //TODO
         private void RemoveCartLineFromOrder()
         {
 

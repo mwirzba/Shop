@@ -103,10 +103,15 @@ namespace Shop.Controllers
             {
                 return NotFound();
             }
-
-            _unitOfWork.Categories.Remove(category);
-            await _unitOfWork.CompleteAsync();
-
+            try
+            {
+                _unitOfWork.Categories.Remove(category);
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                return BadRequest(e.Message);
+            }
             return NoContent();
         }
 

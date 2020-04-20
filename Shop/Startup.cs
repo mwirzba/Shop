@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Models;
+using Shop.Services;
 using System;
 using System.Text;
 
@@ -91,11 +93,21 @@ namespace Shop
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
+            /*
+            services.AddSingleton<IUriService>(prov =>
+            {
+                var accesor = prov.GetRequiredService<IHttpContextAccessor>();
+                var request = accesor.HttpContext.Request;
+                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent(), "/");
+                return new UriService(absoluteUri);
+            });*/
+
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
-                       .AllowAnyHeader();
+                       .AllowAnyHeader()
+                       .WithExposedHeaders("X-Pagination");
             }));
 
             services.AddControllers(opt => {

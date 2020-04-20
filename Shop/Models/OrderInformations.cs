@@ -1,13 +1,12 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-
-namespace Shop.Dtos
+namespace Shop.Models
 {
-    public class OrderDto
+    public class OrderInformations
     {
-        public int Id { get; set; }
-        public ICollection<CartLineDto> CartLines { get; set; }
         public string Name { get; set; }
         public string SurName { get; set; }
         public string Email { get; set; }
@@ -15,8 +14,5 @@ namespace Shop.Dtos
         public string State { get; set; }
         public string Zip { get; set; }
         public string Country { get; set; }
-        public bool GiftWrap { get; set; }
-        public string Status { get; set; }
-        public string UserDto { get; set; }
     }
 }
