@@ -25,6 +25,12 @@ namespace Shop.Data.Repositories
                                 .ToListAsync();
         }
 
+        public async Task<Product> GetProductWthCategorieAsync(int id)
+        {
+            return await ApplicationDbContext.Products.Include(c=>c.Category)
+                .FirstOrDefaultAsync(p=>p.Id == id);
+        }
+
         public async Task<PagedList<Product>> GetPagedProductsAsync(PaginationQuery pagination)
         {
             var products = ApplicationDbContext.Products.OrderBy(on => on.Name);
