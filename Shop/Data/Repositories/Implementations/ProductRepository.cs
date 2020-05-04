@@ -17,12 +17,10 @@ namespace Shop.Data.Repositories
             return await ApplicationDbContext.Products.Include(a => a.Category).ToListAsync();
         }
         
-        public async Task<IEnumerable<Product>> GetPagedProductsWthCategoriesAsync(PaginationQuery paginationQuery)
+        public async Task<IEnumerable<Product>> GetPagedProductsWthCategoriesAsync(PaginationQuery pagination)
         {
-            return await ApplicationDbContext.Products.Include(a => a.Category)
-                                .Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize)
-                                .Take(paginationQuery.PageSize)
-                                .ToListAsync();
+            var products = ApplicationDbContext.Products.Include(a => a.Category).OrderBy(on => on.Name);
+            return await PagedList<Product>.ToPagedList(products, pagination.PageNumber, pagination.PageSize);
         }
 
         public async Task<Product> GetProductWthCategorieAsync(int id)
