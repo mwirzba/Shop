@@ -55,11 +55,12 @@ namespace Shop.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetProductsByPageAsync([FromQuery]PaginationQuery paginationQuery)
+        public async Task<IActionResult> GetProductsByPageAsync([FromQuery]PaginationQuery paginationQuery,[FromQuery] FilterParams filterParams)
         {
             try
             {
-                var productsInDb = await _unitOfWork.Products.GetPagedProductsAsync(paginationQuery);
+                PagedList<Product> productsInDb = await _unitOfWork.Products.GetPagedProductsWthCategoriesByFiltersAsync(paginationQuery, filterParams);
+                
                 if (productsInDb == null)
                     return NotFound();
                 var productsDtoPage = PagedListMapper<Product, ProductDto>.Map(productsInDb, _mapper);

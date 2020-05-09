@@ -17,7 +17,7 @@ namespace Shop.Data.Repositories
             return await ApplicationDbContext.Products.Include(a => a.Category).ToListAsync();
         }
         
-        public async Task<IEnumerable<Product>> GetPagedProductsWthCategoriesAsync(PaginationQuery pagination)
+        public async Task<PagedList<Product>> GetPagedProductsWthCategoriesAsync(PaginationQuery pagination)
         {
             var products = ApplicationDbContext.Products.Include(a => a.Category).OrderBy(on => on.Name);
             return await PagedList<Product>.ToPagedList(products, pagination.PageNumber, pagination.PageSize);
@@ -33,6 +33,65 @@ namespace Shop.Data.Repositories
         {
             var products = ApplicationDbContext.Products.OrderBy(on => on.Name);
             return await PagedList<Product>.ToPagedList(products,pagination.PageNumber, pagination.PageSize);
+        }
+
+        public async Task<PagedList<Product>> GetPagedProductsWthCategoriesBySearchStringAsync(PaginationQuery pagination, string searchString)
+        {
+            var products = ApplicationDbContext.Products
+                .Include(a => a.Category)
+                .Where(p=>p.Name.Contains(searchString))
+                .OrderBy(on => on.Name);
+
+            return await PagedList<Product>.ToPagedList(products, pagination.PageNumber, pagination.PageSize);
+        }
+
+        public async Task<PagedList<Product>> GetPagedProductsWthCategoriesByFiltersAsync(PaginationQuery pagination, FilterParams filterParams)
+        {
+            IQueryable<Product> products = ApplicationDbContext.Products
+                                            .Include(a => a.Category);
+
+            if (FilterCheckMethods.HasSearchStringAndValidPriceRange(filterParams))
+            {
+
+                products = products.Where(p => p.Name.Contains(filterParams.SearchString) 
+                            && p.Price >= filterParams.MinPrice 
+                            && p.Price <= filterParams.MaxPrice);
+            }
+            else if(FilterCheckMethods.HasValidPriceRange(filterParams))
+            {
+                products = products.Where(p => p.Price >= filterParams.MinPrice
+                            && p.Price <= filterParams.MaxPrice);
+            }
+            if(FilterCheckMethods.HasSort(filterParams))
+            {
+                if (string.Equals(SortingTypes.ByName, filterParams.Sort,
+                 System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection)
+                {
+                    products = products.OrderBy(p => p.Name);
+                }
+                else if (string.Equals(SortingTypes.ByName, filterParams.Sort,
+                    System.StringComparison.CurrentCultureIgnoreCase) && !filterParams.SortDirection)
+                {
+                    products = products.OrderByDescending(p => p.Name);
+                }
+
+                if (string.Equals(SortingTypes.ByPrice, filterParams.Sort,
+                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection)
+                {
+                    products = products.OrderBy(p => p.Price);
+                }
+                else if (string.Equals(SortingTypes.ByPrice, filterParams.Sort,
+                    System.StringComparison.CurrentCultureIgnoreCase) && !filterParams.SortDirection)
+                {
+                    products = products.OrderByDescending(p => p.Price);
+                }
+            }
+            else 
+            {
+                products = products.OrderBy(p => p.Name);
+            }
+
+            return await PagedList<Product>.ToPagedList(products, pagination.PageNumber, pagination.PageSize);
         }
 
         public ApplicationDbContext ApplicationDbContext

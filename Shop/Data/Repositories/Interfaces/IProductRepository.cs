@@ -10,6 +10,10 @@ namespace Shop.Data.Repositories
     {
         Task<IEnumerable<Product>> GetProductsWthCategoriesAsync();
         Task<PagedList<Product>> GetPagedProductsAsync(PaginationQuery pagination);
+        Task<PagedList<Product>> GetPagedProductsWthCategoriesAsync(PaginationQuery pagination);
+        Task<PagedList<Product>> GetPagedProductsWthCategoriesBySearchStringAsync(PaginationQuery pagination,string searchString);
+
+        Task<PagedList<Product>> GetPagedProductsWthCategoriesByFiltersAsync(PaginationQuery pagination, FilterParams filterParams);
         Task<Product> GetProductWthCategorieAsync(int id);
     }
 }
