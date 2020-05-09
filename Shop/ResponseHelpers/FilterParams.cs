@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Shop.ResponseHelpers
 {
@@ -25,23 +26,30 @@ namespace Shop.ResponseHelpers
     {
         public static bool HasSort(FilterParams filterParams)
         {
-            if (filterParams.MaxPrice >= filterParams.MinPrice
-                && (string.Equals(SortingTypes.ByName, filterParams.Sort, System.StringComparison.CurrentCultureIgnoreCase) ||
-                string.Equals(SortingTypes.ByName, filterParams.Sort, System.StringComparison.CurrentCultureIgnoreCase)))
+            if (filterParams.Sort != null && 
+                (string.Equals(SortingTypes.ByName, filterParams.Sort, StringComparison.CurrentCultureIgnoreCase) ||
+                string.Equals(SortingTypes.ByPrice, filterParams.Sort, StringComparison.CurrentCultureIgnoreCase)))
                 return true;
             return false;
         }
 
         public static bool HasValidPriceRange(FilterParams filterParams)
         {
-            if (filterParams.MaxPrice >= filterParams.MinPrice)
+            if (filterParams.MaxPrice > filterParams.MinPrice && filterParams.MaxPrice != 0)
                 return true;
             return false;
         }
 
         public static bool HasSearchStringAndValidPriceRange(FilterParams filterParams)
         {
-            if (filterParams.SearchString.Length > 1  && filterParams.MaxPrice >= filterParams.MinPrice)
+            if (filterParams.SearchString != null && filterParams.SearchString.Length > 1  && filterParams.MaxPrice >= filterParams.MinPrice)
+                return true;
+            return false;
+        }
+
+        internal static bool HasSearchString(FilterParams filterParams)
+        {
+            if (filterParams.SearchString != null && filterParams.SearchString.Length > 1)
                 return true;
             return false;
         }
@@ -52,5 +60,4 @@ namespace Shop.ResponseHelpers
         public static readonly string ByName = "byName";
         public static readonly string ByPrice = "byPrice";
     }
-  
 }

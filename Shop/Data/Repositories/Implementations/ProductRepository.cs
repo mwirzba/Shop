@@ -50,38 +50,44 @@ namespace Shop.Data.Repositories
             IQueryable<Product> products = ApplicationDbContext.Products
                                             .Include(a => a.Category);
 
+            if (filterParams.MaxPrice == 0)
+                filterParams.MaxPrice = long.MaxValue;
+
             if (FilterCheckMethods.HasSearchStringAndValidPriceRange(filterParams))
             {
 
-                products = products.Where(p => p.Name.Contains(filterParams.SearchString) 
-                            && p.Price >= filterParams.MinPrice 
-                            && p.Price <= filterParams.MaxPrice);
+                products = products.Where(p => p.Name.Contains(filterParams.SearchString) && (p.Price >= filterParams.MinPrice && p.Price <= filterParams.MaxPrice));
+            }
+            else if (FilterCheckMethods.HasSearchString(filterParams))
+            {
+                products = products.Where(p => p.Name.Contains(filterParams.SearchString));
             }
             else if(FilterCheckMethods.HasValidPriceRange(filterParams))
             {
                 products = products.Where(p => p.Price >= filterParams.MinPrice
                             && p.Price <= filterParams.MaxPrice);
             }
+          
             if(FilterCheckMethods.HasSort(filterParams))
             {
                 if (string.Equals(SortingTypes.ByName, filterParams.Sort,
-                 System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection)
+                 System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == true)
                 {
                     products = products.OrderBy(p => p.Name);
                 }
                 else if (string.Equals(SortingTypes.ByName, filterParams.Sort,
-                    System.StringComparison.CurrentCultureIgnoreCase) && !filterParams.SortDirection)
+                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == false)
                 {
                     products = products.OrderByDescending(p => p.Name);
                 }
 
-                if (string.Equals(SortingTypes.ByPrice, filterParams.Sort,
-                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection)
+                else if (string.Equals(SortingTypes.ByPrice, filterParams.Sort,
+                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == true)
                 {
                     products = products.OrderBy(p => p.Price);
                 }
                 else if (string.Equals(SortingTypes.ByPrice, filterParams.Sort,
-                    System.StringComparison.CurrentCultureIgnoreCase) && !filterParams.SortDirection)
+                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == false)
                 {
                     products = products.OrderByDescending(p => p.Price);
                 }

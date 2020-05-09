@@ -1,5 +1,4 @@
-﻿
-using Shop.Data.Repositories.Implementations;
+﻿using Shop.Data.Repositories.Implementations;
 using Shop.Data.Repositories.Interfaces;
 using System;
 using System.Threading.Tasks;
