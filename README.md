@@ -6,7 +6,7 @@ Durning project I learned important skills in  backend - frontend comunication
 
 I learned:
 * How to write web api controllers
-* How to use generic repository pattern to create easy to read code and short controllers
+* How to implement generic repository pattern to create easy to read code and short controllers
 * How to implement Dto pattern and use it
 * How to use automapper
 * How to authenticate client using token autherntication - JWT
