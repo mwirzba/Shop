@@ -57,6 +57,9 @@ namespace Shop.Data.Repositories
         {
             _entities.RemoveRange(entities);
         }
-
+        public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _entities.AnyAsync<TEntity>(predicate);
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Shop.Data{
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<CartLine> CartLines { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -18,10 +19,12 @@ namespace Shop.Data{
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
-            
+
             builder.Entity<Product>()
                 .HasMany(cl => cl.CartLines)
-                .WithOne(p => p.Product);               
+                .WithOne(p => p.Product);
+
+
 
             builder.Entity<Category>()
                 .HasIndex(i => i.Name)
@@ -31,10 +34,25 @@ namespace Shop.Data{
                 .HasOne(o => o.Order)
                 .WithMany(cl => cl.CartLines)
                 .IsRequired();
-                       
+
+            builder.Entity<Order>()
+                  .Property(o => o.StatusId)
+                  .HasDefaultValue(1)
+                  .IsRequired();
+
+
             builder.Entity<Order>().HasData(
-                new Order {  Id = 1 , Name = "name1" }
+                new Order {  Id = 1 , Name = "name1" , StatusId = 1 }
             );
+
+            builder.Entity<OrderStatus>().HasData(
+                new OrderStatus { Id = 1, Name = "InProgress" },
+                new OrderStatus { Id = 2, Name = "Completed" },
+                new OrderStatus { Id = 3, Name = "Reservation" },
+                new OrderStatus { Id = 4, Name = "Complaint" },
+                new OrderStatus { Id = 5, Name = "Canceled" }
+            );
+
 
             builder.Entity<CartLine>().HasData(
                 new CartLine { 

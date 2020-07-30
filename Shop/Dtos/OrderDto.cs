@@ -16,7 +16,8 @@ namespace Shop.Dtos
         public string Zip { get; set; }
         public string Country { get; set; }
         public bool GiftWrap { get; set; }
-        public string Status { get; set; }
+        public int StatusId { get; set; }
+        public string StatusName { get; set; }
         public string UserDto { get; set; }
     }
 }

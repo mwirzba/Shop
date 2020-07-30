@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop.Data;
 
 namespace Shop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200730044844_ChangedOrderModel")]
+    partial class ChangedOrderModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -260,10 +262,8 @@ namespace Shop.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                    b.Property<int?>("StatusId")
+                        .HasColumnType("int");
 
                     b.Property<string>("SurName")
                         .HasColumnType("nvarchar(max)");
@@ -287,8 +287,7 @@ namespace Shop.Migrations
                         {
                             Id = 1L,
                             GiftWrap = false,
-                            Name = "name1",
-                            StatusId = 1
+                            Name = "name1"
                         });
                 });
 
@@ -310,27 +309,27 @@ namespace Shop.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "InProgress"
-                        },
-                        new
-                        {
-                            Id = 2,
                             Name = "Completed"
                         },
                         new
                         {
-                            Id = 3,
-                            Name = "Reservation"
-                        },
-                        new
-                        {
-                            Id = 4,
+                            Id = 2,
                             Name = "Complaint"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 3,
+                            Name = "Reserved"
+                        },
+                        new
+                        {
+                            Id = 4,
                             Name = "Canceled"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "InProgress"
                         });
                 });
 
@@ -529,9 +528,7 @@ namespace Shop.Migrations
                 {
                     b.HasOne("Shop.Models.OrderStatus", "Status")
                         .WithMany("Orders")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StatusId");
 
                     b.HasOne("Shop.Models.User", "User")
                         .WithMany("Orders")

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Shop.Dtos;
 using Shop.Models;
+using System.Collections.Concurrent;
 
 namespace Shop.Data
 {
@@ -8,7 +9,8 @@ namespace Shop.Data
     {
         public AutoMapperProfile()
         {
-            CreateMap<Product, ProductDto>();
+            CreateMap<Product, ProductDto>()
+                .ForMember(p => p.Category, opt => opt.MapFrom(src => src.Category.Name));
 
             CreateMap<ProductDto, Product>()
                 .ForMember(p => p.Category, opt => opt.Ignore())
@@ -31,8 +33,14 @@ namespace Shop.Data
 
             CreateMap<Order, OrderDto>();
 
-            CreateMap<CartLine, CartLineDto>();
+
+            CreateMap<CartLine, CartLineDto>()
+                .ForMember(p => p.Product, opt => opt.MapFrom(src => src.Product));
+
             CreateMap<CartLineDto, CartLine>();
+
+            CreateMap<OrderStatus, OrderStatusDto>();
+            CreateMap<OrderStatusDto, OrderStatus>();
 
         }
     }

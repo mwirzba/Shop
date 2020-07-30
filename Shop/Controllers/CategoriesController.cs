@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data.Repositories;
@@ -10,6 +11,7 @@ using Shop.Models;
 namespace Shop.Controllers
 {
     [ApiController]
+    [AllowAnonymous]
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
@@ -21,7 +23,6 @@ namespace Shop.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Categories
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
@@ -32,7 +33,6 @@ namespace Shop.Controllers
             return Ok(categoryDto);
         }
 
-        // GET: api/Categories/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(byte id)
         {
@@ -93,7 +93,7 @@ namespace Shop.Controllers
             return Ok();
         }
 
-        // DELETE: api/Categories/5
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(byte id)
         {

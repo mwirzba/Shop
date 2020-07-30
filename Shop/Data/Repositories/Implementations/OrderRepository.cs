@@ -22,14 +22,34 @@ namespace Shop.Data.Repositories.Implementations
                 .Include(o => o.CartLines)
                 .ThenInclude(p => p.Product)
                 .ToListAsync();
-        }   
+        }
+        
         public async Task<Order> GetOrderWithLines(long id)
         {
             return await ApplicationDbContext.Orders
                 .Include(o => o.CartLines)
                 .ThenInclude(p => p.Product)
                 .FirstAsync(o => o.Id == id);
-        } 
+        }
+        
+        public async Task<Order> GetFullOrder(long id)
+        {
+            return await ApplicationDbContext.Orders
+               .Include(o => o.CartLines)
+               .ThenInclude(p => p.Product)
+               .ThenInclude(c => c.Category)
+               .Include(o => o.Status)
+               .FirstAsync(o => o.Id == id);
+        }
+
+        public async Task<IEnumerable<Order>> GetFullOrders(long id)
+        {
+            return await ApplicationDbContext.Orders
+               .Include(o => o.CartLines)
+               .ThenInclude(p => p.Product)
+               .Include(o => o.Status)
+               .ToListAsync();
+        }
     }
 }
  

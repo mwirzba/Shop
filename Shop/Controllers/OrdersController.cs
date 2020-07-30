@@ -22,8 +22,7 @@ namespace Shop.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
 
-        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper,
-            UserManager<User> userManager)
+        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -51,7 +50,7 @@ namespace Shop.Controllers
         {
             try
             {
-                var orderInDb = await _unitOfWork.Orders.GetOrderWithLines(id);
+                var orderInDb = await _unitOfWork.Orders.GetFullOrder(id);
                 var orderDto = _mapper.Map<Order, OrderDto>(orderInDb);
                 return Ok(orderDto);
             }
@@ -112,18 +111,5 @@ namespace Shop.Controllers
             }
             return Ok();
         }
-
-        //TODO
-        private void RemoveCartLineFromOrder()
-        {
-
-        }
-
-        private void AddCartLineFromOrder()
-        {
-
-        }
-
-
     }
 }

@@ -8,6 +8,7 @@ namespace Shop.Data.Repositories
         IProductRepository Products { get; }
         ICategoryRepository Categories { get; }
         IOrderRepository Orders { get; }
+        IOrderStatusRepository OrderStatuses { get; }
         Task<int> CompleteAsync();
     }
 }

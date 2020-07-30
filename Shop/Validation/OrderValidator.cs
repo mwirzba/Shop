@@ -17,6 +17,9 @@ namespace Shop.Models.Validation
             RuleFor(order => order.Name)
              .NotEmpty()
              .WithMessage("Name is required.");
+
+            RuleFor(order => order.StatusId)
+                .NotNull();
         }
     }
 }
