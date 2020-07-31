@@ -59,7 +59,7 @@ namespace Shop.Controllers
         {
             try
             {
-             PagedList<Product> productsInDb = await _unitOfWork.Products.GetPagedProductsWthCategoriesByFiltersAsync(paginationQuery, filterParams);
+                PagedList<Product> productsInDb = await _unitOfWork.Products.GetPagedProductsWthCategoriesByFiltersAsync(paginationQuery, filterParams);
                 
                 if (productsInDb == null)
                     return NotFound();

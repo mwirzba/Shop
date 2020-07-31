@@ -38,11 +38,11 @@ namespace Shop.Controllers
                 var ordersDto = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDto>>(ordersInDb);
                 return Ok(ordersDto);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return BadRequest("Something went wrong");
             }
-        
+
         }
 
         [HttpGet("{id}")]
@@ -64,9 +64,9 @@ namespace Shop.Controllers
 
         [HttpPost]
         public async Task<IActionResult> PostOrderAsync(OrderDto order)
-        {           
+        {
             var orderToSave = _mapper.Map<OrderDto, Order>(order);
-            orderToSave.CartLines = (ICollection<CartLine>)_mapper.Map<IEnumerable<CartLineDto>,IEnumerable<CartLine>>(order.CartLines);
+            orderToSave.CartLines = (ICollection<CartLine>)_mapper.Map<IEnumerable<CartLineDto>, IEnumerable<CartLine>>(order.CartLines);
             await _unitOfWork.Orders.AddAsync(orderToSave);
             if (User.Identity.IsAuthenticated)
             {
@@ -90,7 +90,7 @@ namespace Shop.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderInformationsAsync(long id,OrderDto order)
+        public async Task<IActionResult> PutOrderInformationsAsync(long id, OrderDto order)
         {
             var orderInDb = await _unitOfWork.Orders.GetOrderWithLines(id);
             //var linesInDb = orderInDb.CartLines;
@@ -110,6 +110,25 @@ namespace Shop.Controllers
                 return BadRequest(e.Message);
             }
             return Ok();
+        }
+
+
+        [HttpPut("status/{id}")]
+        public async Task<IActionResult> UpdateOrderStatus(long id,int orderStatusId)
+        {
+            var orderInDb = await _unitOfWork.Orders.GetAsync(id);
+            if(orderInDb == null)
+            {
+                return NotFound();
+            }
+
+            if(orderInDb.StatusId != orderStatusId)
+            {
+                orderInDb.StatusId = orderStatusId;
+                await _unitOfWork.CompleteAsync();
+            }
+
+            return Ok(orderInDb);
         }
     }
 }

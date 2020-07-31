@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Models;
-using Shop.Services;
-using System;
+using Swashbuckle.Swagger;
 using System.Text;
 
 namespace Shop
@@ -43,10 +41,13 @@ namespace Shop
             services.AddTransient<IProductRepository,ProductRepository>();
             services.AddTransient<ICategoryRepository,CategoryRepository>();
             services.AddTransient<IUnitOfWork,UnitOfWork>();
-
+            services.AddSwaggerGen();
 
             services.Configure<IdentityOptions>(options =>
             {
+             
+
+
                 // Password settings.
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
@@ -134,8 +135,19 @@ namespace Shop
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors("MyPolicy");
 
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
+
+
+            app.UseCors("MyPolicy");
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseStatusCodePages();
