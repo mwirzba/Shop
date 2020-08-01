@@ -14,7 +14,9 @@ using Microsoft.IdentityModel.Tokens;
 using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Models;
-using Swashbuckle.Swagger;
+using System;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Shop
@@ -41,12 +43,20 @@ namespace Shop
             services.AddTransient<IProductRepository,ProductRepository>();
             services.AddTransient<ICategoryRepository,CategoryRepository>();
             services.AddTransient<IUnitOfWork,UnitOfWork>();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen( options =>
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "Shop Api"
+                });
+                var fileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
+                options.IncludeXmlComments(filePath);
+            });
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.Configure<IdentityOptions>(options =>
             {
-             
-
 
                 // Password settings.
                 options.Password.RequireDigit = true;

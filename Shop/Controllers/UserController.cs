@@ -8,6 +8,9 @@ using Shop.Models;
 
 namespace Shop.Controllers
 {
+    /// <summary>
+    /// Controller responsible for management user account
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
@@ -22,6 +25,12 @@ namespace Shop.Controllers
             _mapper = mapper;
         }
 
+
+        /// <summary>
+        /// Returns user account informations
+        /// </summary>
+        /// <response code="200">Returned user informations</response>
+        /// <response code="401">User is not logged</response>
         [HttpGet]
         public async Task<IActionResult> GetUserInformations()
         {
@@ -35,8 +44,15 @@ namespace Shop.Controllers
             return Ok(mappedUser);
         }
 
+
+        /// <summary>
+        /// Returns user account informations
+        /// </summary>
+        /// <param name="userDto">User data</param>
+        /// <response code="200">Returned user informations</response>
+        /// <response code="401">User is not logged</response>
         [HttpPatch]
-        public async Task<IActionResult> PatchUserInformations(UserDto userDto)
+        public async Task<IActionResult> PatchUserInformations([FromBody]UserDto userDto)
         {
             if (!User.Identity.IsAuthenticated)
             {

@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace Shop.Controllers
 {
+    /// <summary>
+    /// Controller responsible for orders management.
+    /// </summary>
     [ApiController]
     [AllowAnonymous]
     [Route("api/[controller]")]
@@ -29,6 +32,11 @@ namespace Shop.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Retrives all ordes
+        /// </summary>
+        /// <response code="200">Order rerurned</response>
+        /// <response code="400">Exception occurred</response>
         [HttpGet]
         public async Task<IActionResult> GetOrdersAsync()
         {
@@ -45,8 +53,14 @@ namespace Shop.Controllers
 
         }
 
+        /// <summary>
+        /// Retrives order by unique id.
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <response code="200">Order returned</response>
+        /// <response code="400">Exception occurred</response>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderAsync(long id)
+        public async Task<IActionResult> GetOrderAsync([FromQuery]long id)
         {
             try
             {
@@ -61,10 +75,23 @@ namespace Shop.Controllers
         }
 
 
-
+        /// <summary>
+        /// Creates new order.
+        /// </summary>
+        /// <param name="order">New Order data</param>
+        /// <response code="200">Order created</response>
+        /// <response code="422">Missing order paramether</response>
+        /// <response code="400">Exception during database update happened or another exception</response>
         [HttpPost]
-        public async Task<IActionResult> PostOrderAsync(OrderDto order)
+        public async Task<IActionResult> PostOrderAsync([FromBody]OrderDto order)
         {
+            
+            if(order == null)
+            {
+                return UnprocessableEntity();
+            }
+
+
             var orderToSave = _mapper.Map<OrderDto, Order>(order);
             orderToSave.CartLines = (ICollection<CartLine>)_mapper.Map<IEnumerable<CartLineDto>, IEnumerable<CartLine>>(order.CartLines);
             await _unitOfWork.Orders.AddAsync(orderToSave);
@@ -89,11 +116,30 @@ namespace Shop.Controllers
             return Ok();
         }
 
+
+        /// <summary>
+        /// Updates order
+        /// </summary>
+        /// <param name="order">Updated order new data</param>
+        /// <param name="id">Order id</param>
+        /// <response code="200">Order has been updated</response>
+        /// <response code="422">Missing order paramether</response>
+        /// <response code="400">Exception during database update happened or another exception</response>
+        /// <response code="404">Order with given id not found</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderInformationsAsync(long id, OrderDto order)
+        public async Task<IActionResult> PutOrderInformationsAsync([FromQuery]long id,[FromBody]OrderDto order)
         {
+            if (order == null)
+            {
+                return UnprocessableEntity();
+            }
+
             var orderInDb = await _unitOfWork.Orders.GetOrderWithLines(id);
             //var linesInDb = orderInDb.CartLines;
+            if (orderInDb == null)
+            {
+                return NotFound();
+            }
 
             _mapper.Map(order, orderInDb);
 
@@ -113,22 +159,36 @@ namespace Shop.Controllers
         }
 
 
+        /// <summary>
+        /// Updates order.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="orderStatusId">Order status id</param>
+        /// <response code="200">Order status has been updated.</response>
+        /// <response code="400">Exception during database update happened or another exception</response>
+        /// <response code="404">Order or orderStatus with given id not found.</response>
         [HttpPut("status/{id}")]
-        public async Task<IActionResult> UpdateOrderStatus(long id,int orderStatusId)
+        public async Task<IActionResult> UpdateOrderStatus([FromQuery]long id,[FromBody]int orderStatusId)
         {
             var orderInDb = await _unitOfWork.Orders.GetAsync(id);
             if(orderInDb == null)
             {
-                return NotFound();
+                return NotFound("Wrong order id.");
             }
 
-            if(orderInDb.StatusId != orderStatusId)
+            var orderStatus = await _unitOfWork.OrderStatuses.GetAsync(orderStatusId);
+
+            if (orderStatus == null)
+            {
+                return NotFound("Wrong order status id.");
+            }
+            if (orderInDb.StatusId != orderStatusId)
             {
                 orderInDb.StatusId = orderStatusId;
                 await _unitOfWork.CompleteAsync();
             }
 
-            return Ok(orderInDb);
+            return Ok();
         }
     }
 }

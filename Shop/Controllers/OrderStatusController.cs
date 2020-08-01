@@ -10,6 +10,9 @@ using Shop.Models;
 
 namespace Shop.Controllers
 {
+    /// <summary>
+    /// Controller responsible for order status CRUD actions.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
@@ -23,16 +26,30 @@ namespace Shop.Controllers
             _mapper = mapper;
         }
 
+
+        /// <summary>
+        /// Retrives all orders statuses
+        /// </summary>
+        /// <response code="200">Returned order list</response>
+        /// <response code="404">Not Found order status</response>
         [HttpGet]
-        public async Task<IActionResult> GetOrderStatuses()
+        public async Task<IActionResult> GetOrderStatus()
         {
             var orderStatuses =  await _unitOfWork.OrderStatuses.GetAllAsync();
+            if (orderStatuses == null)
+                return NotFound();
+
             var orderStatusesDto = _mapper.Map<IEnumerable<OrderStatusDto>>(orderStatuses);
             return Ok(orderStatusesDto);
         }
-
+        /// <summary>
+        /// Retrives order status by unique id
+        /// </summary>
+        /// <param name="id">Order status id</param>
+        /// <response code="200">Found order status</response>
+        /// <response code="404">Not Found order status</response>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderStatus(int id)
+        public async Task<IActionResult> GetOrderStatus([FromQuery]int id)
         {
             var orderStatus = await _unitOfWork.OrderStatuses.GetAsync(id);
 
@@ -47,16 +64,31 @@ namespace Shop.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderStatus(int id, OrderStatusDto orderStatusDto)
+        /// <summary>
+        /// Updates order status by unique id
+        /// </summary>
+        /// <param name="id">Order status id</param>
+        /// <param name="orderStatus">Order status new data.</param>
+        /// <response code="200">Order status updated</response>
+        /// <response code="422">Missing orderstatus paramether.</response>
+        /// <response code="400">Wrong id of updated order is not equal to given id.</response>
+        /// <response code="404">Not Found order status</response>
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateOrderStatus([FromQuery]int id,[FromBody]OrderStatusDto orderStatus)
         {
-            if (id != orderStatusDto.Id)
+
+            if (orderStatus == null)
             {
-                return BadRequest();
+                return UnprocessableEntity(orderStatus);
             }
 
-            var orderStatusInDb = await _unitOfWork.OrderStatuses.GetAsync(orderStatusDto.Id);
-            _mapper.Map(orderStatusDto, orderStatusInDb);
+            if (id != orderStatus.Id)
+            {
+                return UnprocessableEntity();
+            }
+
+            var orderStatusInDb = await _unitOfWork.OrderStatuses.GetAsync(orderStatus.Id);
+            _mapper.Map(orderStatus, orderStatusInDb);
 
             try
             {
@@ -75,18 +107,46 @@ namespace Shop.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
+
+        /// <summary>
+        /// Creates order status
+        /// </summary>
+        /// <param name="orderStatus">Order status data.</param>
+        /// <response code="200">Created order status</response>
+        /// <response code="422">Missing orderstatus paramether.</response>
+        /// <response code="400">Exception during database update.</response>
         [HttpPost]
         public async Task<IActionResult> PostOrderStatus(OrderStatusDto orderStatus)
         {
-            var orderStatusToSave = _mapper.Map<OrderStatusDto, OrderStatus>(orderStatus);
-            await _unitOfWork.CompleteAsync();
+            if(orderStatus ==  null)
+            {
+                return UnprocessableEntity(orderStatus);
+            }
 
-            return CreatedAtAction("GetOrderStatus", new { id = orderStatus.Id }, orderStatus);
+            var orderStatusToSave = _mapper.Map<OrderStatusDto, OrderStatus>(orderStatus);
+            
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
 
+        /// <summary>
+        /// Deletes status with unique id
+        /// </summary>
+        /// <param name="id">Order status id.</param>
+        /// <response code="200">Deleted order status</response>
+        /// <response code="404">Order status not found.</response>
+        /// <response code="400">Exception during database update.</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderStatus(int id)
         {
@@ -97,8 +157,14 @@ namespace Shop.Controllers
             }
 
             _unitOfWork.OrderStatuses.Remove(orderStatus);
-            await _unitOfWork.CompleteAsync();
-
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
             return Ok(_mapper.Map<OrderStatusDto>(orderStatus));
         }
 

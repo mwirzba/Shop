@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Shop</name>
+    </assembly>
+    <members>
+        <member name="T:Shop.Controllers.AuthController">
+            <summary>
+            Authorization controller responsible for register new user,login;
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.AuthController.Register(Shop.Dtos.UserDto)">
+            <summary>
+            Allows user to create account
+            </summary>
+            <param name="userDto">The user account dto which contains user login and password</param>
+            <response code="200">Account created</response>
+            <response code="409">User name is already used. Account has not been created.</response>
+        </member>
+        <member name="M:Shop.Controllers.AuthController.Login(Shop.Dtos.UserDto)">
+            <summary>
+            Allows user to login
+            </summary>
+            <param name="userDto">The user account dto which contains user login and password</param>
+            <response code="200">User has been logged</response>
+            <response code="401">Invalid user name or password</response>
+        </member>
+        <member name="T:Shop.Controllers.CategoriesController">
+            <summary>
+            Controller responsible for product categories CRUD
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.CategoriesController.GetCategories">
+            <summary>
+            Returns list of all categories.
+            </summary>
+            <response code="200">Returned categories</response>
+            <response code="404">No categories found in db.</response>
+        </member>
+        <member name="M:Shop.Controllers.CategoriesController.GetCategory(System.Byte)">
+            <summary>
+            Retrieves category by unique id.
+            </summary>
+            <param name="id">Category id</param>
+            <response code="200">Category found.</response>
+            <response code="404">Category with given id not found.</response>
+        </member>
+        <member name="M:Shop.Controllers.CategoriesController.PutCategory(System.Byte,Shop.Dtos.CategoryDto)">
+            <summary>
+            Updates category by unique id.
+            </summary>
+            <param name="id">Category id</param>
+            <param name="category">category</param>
+            <response code="200">Category updated</response>
+            <response code="404">Category not found</response>
+            <response code="400">Exception during database update happened</response>
+            <response code="422">Missing category parameter</response>
+        </member>
+        <member name="M:Shop.Controllers.CategoriesController.PostCategory(Shop.Dtos.CategoryDto)">
+            <summary>
+            Creates new category
+            </summary>
+            <param name="category">category</param>
+            <response code="200">Category created</response>
+            <response code="400">Exception during database update happened</response>
+            <response code="422">Missing category parameter</response>
+        </member>
+        <member name="M:Shop.Controllers.CategoriesController.DeleteCategory(System.Byte)">
+            <summary>
+            Deletes category with given id.
+            </summary>
+            <param name="id">Category id</param>
+            <response code="200">Category deleted</response>
+            <response code="404">Category with id not found</response>
+            <response code="400">Exception during database update happened</response>
+        </member>
+        <member name="T:Shop.Controllers.OrdersController">
+            <summary>
+            Controller responsible for orders management.
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.OrdersController.GetOrdersAsync">
+            <summary>
+            Retrives all ordes
+            </summary>
+            <response code="200">Order rerurned</response>
+            <response code="400">Exception occurred</response>
+        </member>
+        <member name="M:Shop.Controllers.OrdersController.GetOrderAsync(System.Int64)">
+            <summary>
+            Retrives order by unique id.
+            </summary>
+            <param name="id">Order id</param>
+            <response code="200">Order returned</response>
+            <response code="400">Exception occurred</response>
+        </member>
+        <member name="M:Shop.Controllers.OrdersController.PostOrderAsync(Shop.Dtos.OrderDto)">
+            <summary>
+            Creates new order.
+            </summary>
+            <param name="order">New Order data</param>
+            <response code="200">Order created</response>
+            <response code="422">Missing order paramether</response>
+            <response code="400">Exception during database update happened or another exception</response>
+        </member>
+        <member name="M:Shop.Controllers.OrdersController.PutOrderInformationsAsync(System.Int64,Shop.Dtos.OrderDto)">
+            <summary>
+            Updates order
+            </summary>
+            <param name="order">Updated order new data</param>
+            <param name="id">Order id</param>
+            <response code="200">Order has been updated</response>
+            <response code="422">Missing order paramether</response>
+            <response code="400">Exception during database update happened or another exception</response>
+            <response code="404">Order with given id not found</response>
+        </member>
+        <member name="M:Shop.Controllers.OrdersController.UpdateOrderStatus(System.Int64,System.Int32)">
+            <summary>
+            Updates order.
+            </summary>
+            <param name="id"></param>
+            <param name="orderStatusId">Order status id</param>
+            <response code="200">Order status has been updated.</response>
+            <response code="400">Exception during database update happened or another exception</response>
+            <response code="404">Order or orderStatus with given id not found.</response>
+        </member>
+        <member name="T:Shop.Controllers.OrderStatusController">
+            <summary>
+            Controller responsible for order status CRUD actions.
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.OrderStatusController.GetOrderStatus">
+            <summary>
+            Retrives all orders statuses
+            </summary>
+            <response code="200">Returned order list</response>
+            <response code="404">Not Found order status</response>
+        </member>
+        <member name="M:Shop.Controllers.OrderStatusController.GetOrderStatus(System.Int32)">
+            <summary>
+            Retrives order status by unique id
+            </summary>
+            <param name="id">Order status id</param>
+            <response code="200">Found order status</response>
+            <response code="404">Not Found order status</response>
+        </member>
+        <member name="M:Shop.Controllers.OrderStatusController.UpdateOrderStatus(System.Int32,Shop.Dtos.OrderStatusDto)">
+            <summary>
+            Updates order status by unique id
+            </summary>
+            <param name="id">Order status id</param>
+            <param name="orderStatus">Order status new data.</param>
+            <response code="200">Order status updated</response>
+            <response code="422">Missing orderstatus paramether.</response>
+            <response code="400">Wrong id of updated order is not equal to given id.</response>
+            <response code="404">Not Found order status</response>
+        </member>
+        <member name="M:Shop.Controllers.OrderStatusController.PostOrderStatus(Shop.Dtos.OrderStatusDto)">
+            <summary>
+            Creates order status
+            </summary>
+            <param name="orderStatus">Order status data.</param>
+            <response code="200">Created order status</response>
+            <response code="422">Missing orderstatus paramether.</response>
+            <response code="400">Exception during database update.</response>
+        </member>
+        <member name="M:Shop.Controllers.OrderStatusController.DeleteOrderStatus(System.Int32)">
+            <summary>
+            Deletes status with unique id
+            </summary>
+            <param name="id">Order status id.</param>
+            <response code="200">Deleted order status</response>
+            <response code="404">Order status not found.</response>
+            <response code="400">Exception during database update.</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductsController.PostProductAsync(Shop.Dtos.ProductDto)">
+            <summary>
+            Creates new product
+            </summary>
+            <param name="product">Product data.</param>
+            <response code="200">Created new product</response>
+            <response code="422">Missing product in body</response>
+            <response code="400">Exception during database update or other proccess</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductsController.GetProductsByPageAsync(Shop.ResponseHelpers.PaginationQuery,Shop.ResponseHelpers.FilterParams)">
+            <summary>
+             Returnes paginaged list of produtcs
+            </summary>
+            <param name="paginationQuery">Pagination settings</param>
+            <param name="filterParams">Params for filtering paginatied list</param>
+            <response code="200">Returned paginated products</response>
+            <response code="404">Not found products in database</response>
+            <response code="400">Exception during database update or other proccess</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductsController.GetProductsAsync">
+            <summary>
+            Retrives all products
+            </summary>
+            <response code="200">Returned list of products</response>
+            <response code="404">Not found products in db</response>
+            <response code="400">Exception during database update or other proccess.</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductsController.GetProductAsync(System.Int32)">
+            <summary>
+            Retrives product by unique id
+            </summary>
+            <param name="id">Product id</param>
+            <response code="200">Returned list of products</response>
+            <response code="404">Not found products in db</response>
+            <response code="400">Exception during database update or other proccess.</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductsController.PutProductAsync(Shop.Dtos.ProductDto,System.Int32)">
+            <summary>
+            Updates product with given id
+            </summary>
+            <param name="product"></param>
+            <param name="id">Product id</param>
+            <response code="200">Returned list of products</response>
+            <response code="404">Not found product with given id</response>
+            <response code="400">Exception during database update or other proccess.</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductsController.DeleteProductAsync(System.Int32)">
+            <summary>
+            Deletes product with given id
+            </summary>
+            <param name="id">Product id</param>
+            <response code="200">Deleted product</response>
+            <response code="200">Not found product with given id.</response>
+            <response code="400">Exception during database update or other proccess</response>
+        </member>
+        <member name="T:Shop.Controllers.UserController">
+            <summary>
+            Controller responsible for management user account
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.UserController.GetUserInformations">
+            <summary>
+            Returns user account informations
+            </summary>
+            <response code="200">Returned user informations</response>
+            <response code="401">User is not logged</response>
+        </member>
+        <member name="M:Shop.Controllers.UserController.PatchUserInformations(Shop.Dtos.UserDto)">
+            <summary>
+            Returns user account informations
+            </summary>
+            <param name="userDto">User data</param>
+            <response code="200">Returned user informations</response>
+            <response code="401">User is not logged</response>
+        </member>
+    </members>
+</doc>

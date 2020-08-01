@@ -14,7 +14,9 @@ using Shop.Respn;
 
 namespace Shop.Controllers
 {
-
+    /// <summary>
+    /// Controller responsible for product CRUD actions
+    /// </summary>
     [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
@@ -29,8 +31,15 @@ namespace Shop.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Creates new product
+        /// </summary>
+        /// <param name="product">Product data.</param>
+        /// <response code="200">Created new product</response>
+        /// <response code="422">Missing product in body</response>
+        /// <response code="400">Exception during database update or other proccess</response>
         [HttpPost]
-        public async Task<IActionResult> PostProductAsync(ProductDto product)
+        public async Task<IActionResult> PostProductAsync([FromBody]ProductDto product)
         {
             if (product == null)
                 return BadRequest();
@@ -54,6 +63,14 @@ namespace Shop.Controllers
         }
 
 
+        /// <summary>
+        ///  Returnes paginaged list of produtcs
+        /// </summary>
+        /// <param name="paginationQuery">Pagination settings</param>
+        /// <param name="filterParams">Params for filtering paginatied list</param>
+        /// <response code="200">Returned paginated products</response>
+        /// <response code="404">Not found products in database</response>
+        /// <response code="400">Exception during database update or other proccess</response>
         [HttpGet]
         public async Task<IActionResult> GetProductsByPageAsync([FromQuery]PaginationQuery paginationQuery,[FromQuery] FilterParams filterParams)
         {
@@ -85,6 +102,13 @@ namespace Shop.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Retrives all products
+        /// </summary>
+        /// <response code="200">Returned list of products</response>
+        /// <response code="404">Not found products in db</response>
+        /// <response code="400">Exception during database update or other proccess.</response>
         [HttpGet("all")]
         public async Task<IActionResult> GetProductsAsync()
         {
@@ -103,6 +127,14 @@ namespace Shop.Controllers
         }
 
 
+
+        /// <summary>
+        /// Retrives product by unique id
+        /// </summary>
+        /// <param name="id">Product id</param>
+        /// <response code="200">Returned list of products</response>
+        /// <response code="404">Not found products in db</response>
+        /// <response code="400">Exception during database update or other proccess.</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductAsync(int id)
         {
@@ -120,6 +152,15 @@ namespace Shop.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Updates product with given id
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="id">Product id</param>
+        /// <response code="200">Returned list of products</response>
+        /// <response code="404">Not found product with given id</response>
+        /// <response code="400">Exception during database update or other proccess.</response>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductAsync(ProductDto product,int id)
         {
@@ -147,7 +188,13 @@ namespace Shop.Controllers
 
             return NoContent();
         }
-
+        /// <summary>
+        /// Deletes product with given id
+        /// </summary>
+        /// <param name="id">Product id</param>
+        /// <response code="200">Deleted product</response>
+        /// <response code="200">Not found product with given id.</response>
+        /// <response code="400">Exception during database update or other proccess</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
@@ -169,7 +216,7 @@ namespace Shop.Controllers
                 return BadRequest(e.Message);
             }
 
-            return NoContent();
+            return Ok();
         }
     }
 }

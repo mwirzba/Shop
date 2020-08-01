@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace Shop.Controllers
 {
+    /// <summary>
+    /// Authorization controller responsible for register new user,login;
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -31,6 +34,12 @@ namespace Shop.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Allows user to create account
+        /// </summary>
+        /// <param name="userDto">The user account dto which contains user login and password</param>
+        /// <response code="200">Account created</response>
+        /// <response code="409">User name is already used. Account has not been created.</response>
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserDto userDto)
@@ -53,6 +62,13 @@ namespace Shop.Controllers
             return Ok();
         }
 
+
+        /// <summary>
+        /// Allows user to login
+        /// </summary>
+        /// <param name="userDto">The user account dto which contains user login and password</param>
+        /// <response code="200">User has been logged</response>
+        /// <response code="401">Invalid user name or password</response>
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserDto userDto)
