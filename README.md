@@ -12,5 +12,6 @@ I learned:
 * How to authenticate client using token autherntication - JWT
 * How to write tests using NUnit and mocking data with Moq framework
 * How to validate data using Fluent Validation framework
+* How to use swagger to create Web API documentation
 
 
