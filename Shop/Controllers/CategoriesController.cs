@@ -52,7 +52,7 @@ namespace Shop.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory([FromBody]byte id)
         {
-            var categoryInDb = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
+            var categoryInDb = await _unitOfWork.Categories.GetAsync(id);
 
             if (categoryInDb == null)
             {

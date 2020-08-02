@@ -17,14 +17,7 @@
             <response code="200">Account created</response>
             <response code="409">User name is already used. Account has not been created.</response>
         </member>
-        <member name="M:Shop.Controllers.AuthController.Login(Shop.Dtos.UserDto)">
-            <summary>
-            Allows user to login
-            </summary>
-            <param name="userDto">The user account dto which contains user login and password</param>
-            <response code="200">User has been logged</response>
-            <response code="401">Invalid user name or password</response>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Shop.Controllers.AuthController.Login(Shop.Dtos.UserDto)" -->
         <member name="T:Shop.Controllers.CategoriesController">
             <summary>
             Controller responsible for product categories CRUD
@@ -172,6 +165,11 @@
             <response code="200">Deleted order status</response>
             <response code="404">Order status not found.</response>
             <response code="400">Exception during database update.</response>
+        </member>
+        <member name="T:Shop.Controllers.ProductsController">
+            <summary>
+            Controller responsible for product CRUD actions
+            </summary>
         </member>
         <member name="M:Shop.Controllers.ProductsController.PostProductAsync(Shop.Dtos.ProductDto)">
             <summary>

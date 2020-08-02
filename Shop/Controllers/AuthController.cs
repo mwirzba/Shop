@@ -62,12 +62,13 @@ namespace Shop.Controllers
             return Ok();
         }
 
-
         /// <summary>
         /// Allows user to login
         /// </summary>
         /// <param name="userDto">The user account dto which contains user login and password</param>
-        /// <response code="200">User has been logged</response>
+        /// <response code="200">
+        /// User has been logged. Token is returned which has to be passed in actions that require to be logged.
+        /// </response>
         /// <response code="401">Invalid user name or password</response>
         [AllowAnonymous]
         [HttpPost("login")]

@@ -127,7 +127,6 @@ namespace Shop.Controllers
         }
 
 
-
         /// <summary>
         /// Retrives product by unique id
         /// </summary>
@@ -188,6 +187,8 @@ namespace Shop.Controllers
 
             return NoContent();
         }
+
+
         /// <summary>
         /// Deletes product with given id
         /// </summary>
