@@ -8,12 +8,15 @@ using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Dtos;
 using Shop.Models;
+using Shop.Respn;
+using Shop.ResponseHelpers;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using FluentAssertions;
 
 namespace Shop.Tests
 {
+    [TestFixture]
     class ProductControllerTests
     {
         public ProductControllerTests()
@@ -55,10 +58,19 @@ namespace Shop.Tests
             var productsList = new List<Product>
             {
                new Product {Id =1,Name="prod1",CategoryId = 1 },
-               new Product {Id =2,Name="prod2",CategoryId = 2 }
+               new Product {Id =2,Name="prod2",CategoryId = 2 },
+               new Product {Id =3,Name="prod3",CategoryId = 2 },
+               new Product {Id =3,Name="prod4",CategoryId = 2 },
+               new Product {Id =4,Name="prod5",CategoryId = 2 },
+               new Product {Id =5,Name="prod6",CategoryId = 2 },
+               new Product {Id =6,Name="prod7",CategoryId = 2 },
+               new Product {Id =7,Name="prod8",CategoryId = 2 }
             };
+            var pagedList = new PagedList<Product>(productsList,7,1,5);
+
             _productRepo.Setup(p => p.GetProductsWthCategoriesAsync()).ReturnsAsync(productsList);
             _productRepo.Setup(p => p.GetProductWthCategorieAsync(1)).ReturnsAsync(productsList[0]);
+            _productRepo.Setup(p => p.GetPagedProductsWthCategoriesByFiltersAsync(new PaginationQuery(),null)).ReturnsAsync(pagedList);
             _productRepo.Setup(r => r.GetAsync(1)).ReturnsAsync(new Product());
             _productRepo.Setup(r => r.AddAsync(new Product())).Returns(Task.CompletedTask);
             _productRepo.Setup(r => r.Remove(new Product()));
@@ -73,7 +85,13 @@ namespace Shop.Tests
             return new List<ProductDto>
             {
                new ProductDto {Id =1,Name="prod1",CategoryId = 1 },
-               new ProductDto {Id =2,Name="prod2",CategoryId = 2 }
+               new ProductDto {Id =2,Name="prod2",CategoryId = 2 },
+               new ProductDto {Id =3,Name="prod3",CategoryId = 2 },
+               new ProductDto {Id =3,Name="prod4",CategoryId = 2 },
+               new ProductDto {Id =4,Name="prod5",CategoryId = 2 },
+               new ProductDto {Id =5,Name="prod6",CategoryId = 2 },
+               new ProductDto {Id =6,Name="prod7",CategoryId = 2 },
+               new ProductDto {Id =7,Name="prod8",CategoryId = 2 }
             };
         }
 
@@ -86,8 +104,9 @@ namespace Shop.Tests
             var result = resultFromController as OkObjectResult;
             List<ProductDto> productsList = result.Value as List<ProductDto>;
 
-            Assert.IsNotNull(productsList);
-            Assert.AreEqual(GetProductsList().Count, productsList.Count);
+            //Assert
+            productsList.Should().NotBeNull();
+            productsList.Should().HaveCount(GetProductsList().Count);
         }
 
         [Test]
@@ -98,9 +117,9 @@ namespace Shop.Tests
             _productRepo.Setup(p => p.GetProductsWthCategoriesAsync()).ReturnsAsync((IEnumerable<Product>)null);
             var resultFromController = await _productController.GetProductsAsync();
             var result = resultFromController as NotFoundResult;
-  
-            Assert.IsNotNull(result);
-            Assert.AreEqual(StatusCodes.Status404NotFound,result.StatusCode);
+
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
 
         [Test]
@@ -108,10 +127,11 @@ namespace Shop.Tests
         {
             MockData();
             var resultFromController = await _productController.GetProductsAsync();
-            var okResult = resultFromController as OkObjectResult;
+            var result = resultFromController as OkObjectResult;
 
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(StatusCodes.Status200OK,okResult.StatusCode);
+            //Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
         }
 
         [Test]
@@ -125,8 +145,9 @@ namespace Shop.Tests
             var products = GetProductsList();
             var productWithIdOne = products.Find(p => p.Id == 1);
 
-            Assert.IsNotNull(productWithIdOne);
-            Assert.AreEqual(productWithIdOne.Name, productDto.Name);
+            //Assert
+            productWithIdOne.Should().NotBeNull();
+            productDto.Name.Should().Be(productWithIdOne.Name);
         }
 
         [Test]
@@ -134,10 +155,11 @@ namespace Shop.Tests
         {
             MockData();
             var resultFromController = await _productController.GetProductAsync(1);
-            var okResult = resultFromController as OkObjectResult;
+            var result = resultFromController as OkObjectResult;
 
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
+            //Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
         }
 
         [Test]
@@ -147,8 +169,9 @@ namespace Shop.Tests
             var resultFromController = await _productController.GetProductAsync(2);
             var result = resultFromController as NotFoundResult;
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
+            //Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
 
         [Test]
@@ -158,10 +181,11 @@ namespace Shop.Tests
             var productDto  = new ProductDto { Id = 3,Price=1, CategoryId = 1 };
 
             var resultFromController = await _productController.PostProductAsync(productDto);
-            var okResult = resultFromController as OkResult;
+            var result = resultFromController as OkObjectResult;
 
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(StatusCodes.Status200OK,okResult.StatusCode);
+            //Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
         }
 
 
@@ -172,8 +196,9 @@ namespace Shop.Tests
             var resultFromController = await _productController.PostProductAsync(null);
             var result = resultFromController as BadRequestResult;
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(StatusCodes.Status400BadRequest, result.StatusCode);
+            //Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
         }
 
 
@@ -186,23 +211,25 @@ namespace Shop.Tests
             var updatedProduct= new ProductDto { Id = 1, Name = "prodnew", CategoryId = 3 };
            
             var resultFromController = await productController.PutProductAsync(updatedProduct,1);
-            var okResult = resultFromController as NoContentResult;
+            var result = resultFromController as NoContentResult;
 
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(StatusCodes.Status204NoContent,okResult.StatusCode);
+            //Assert
+            result.Should().NotBeNull();
+            result.Should().Be(StatusCodes.Status204NoContent);
         }
 
         [Test]
-        public async Task DeleteProductAsync_ValidId_ShouldReturn204StatusCode()
+        public async Task DeleteProductAsync_ValidId_ShouldReturn200StatusCode()
         {
             MockData();
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
             ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
             var resultFromController = await productController.DeleteProductAsync(1);
-            var okResult = resultFromController as NoContentResult;
+            var result = resultFromController as OkResult;
 
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(StatusCodes.Status204NoContent,okResult.StatusCode);
+            //Assert
+            result.Should().NotBeNull();
+            result.Should().Be(StatusCodes.Status200OK);
 
         }
 
@@ -214,20 +241,12 @@ namespace Shop.Tests
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
             ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
             var resultFromController = await productController.DeleteProductAsync(2);
-            var okResult = resultFromController as NotFoundResult;
+            var result = resultFromController as NotFoundResult;
 
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(StatusCodes.Status404NotFound,okResult.StatusCode);
-
+            //Assert
+            result.Should().NotBeNull();
+            result.Should().Be(StatusCodes.Status404NotFound);
         }
-        /*
-        [Test]
-        public void Can_Validate_Wrong_Product()
-        {
-            var invalidProduct = new ProductDto{ Name = "", Id = 1 , Price =-1};
-            var validationResults = new List<ValidationResult>();
-            var isValid = Validator.TryValidateObject(invalidProduct, new System.ComponentModel.DataAnnotations.ValidationContext(invalidProduct), validationResults);
-            Assert.IsFalse(isValid);
-        }*/
     }
 }
+ 

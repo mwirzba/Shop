@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Tests
 {
+    [TestFixture]
     class CategoryControllerTests
     {
         public CategoryControllerTests()
@@ -24,6 +25,7 @@ namespace Shop.Tests
         private Mock<ICategoryRepository> _categoriesRepo;
         private CategoriesController _categoryController;
 
+        [OneTimeSetUp]
         private void MockData()
         {
             _mock = GetConfiguredMockObject();
@@ -40,12 +42,11 @@ namespace Shop.Tests
             return config;
         }
 
-
         private Mock<IUnitOfWork> GetConfiguredMockObject()
         {
             Mock<IUnitOfWork> mock = new Mock<IUnitOfWork>();
             var categories = new List<Category>
-            {
+            {   
                new Category {Id = 1,Name = "Cat1"},
                new Category {Id = 2,Name = "Cat2"}
             }; 
@@ -71,7 +72,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetCategories_ShouldReturnAllCategoriesDto()
         {
-            MockData();
             var resultFromController = await _categoryController.GetCategories();
             var result = resultFromController as OkObjectResult;
             List<CategoryDto> categories = result.Value as List<CategoryDto>;
@@ -83,7 +83,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetCategories_IfRepoReturnsNull_ShouldReturnNotFound()
         {
-
             var emptyProductsList = new List<Category>();
             _categoriesRepo.Setup(p => p.GetAllAsync()).ReturnsAsync((IEnumerable<Category>)null);
             var resultFromController = await _categoryController.GetCategories();
@@ -96,7 +95,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetCategories_ShouldReturnOk()
         {
-            MockData();
             var resultFromController = await _categoryController.GetCategories();
             var okResult = resultFromController as OkObjectResult;
 
@@ -107,8 +105,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetCategory_ValidCategoryId_ShouldReturnCategoryDto()
         {
-
-            MockData();
             var resultFromController = await _categoryController.GetCategory(1);
             var okResult = resultFromController as OkObjectResult;
             CategoryDto categoryDto = okResult.Value as CategoryDto;
@@ -122,7 +118,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetCategory_ValidCategoryId_ShouldReturnOk()
         {
-            MockData();
             var resultFromController = await _categoryController.GetCategory(1);
             var okResult = resultFromController as OkObjectResult;
 
@@ -133,7 +128,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetCategory_InValidCategoryId_ShouldReturnNotFound()
         {
-            MockData();
             var resultFromController = await _categoryController.GetCategory(2);
             var result = resultFromController as NotFoundResult;
 
@@ -144,7 +138,6 @@ namespace Shop.Tests
         [Test]
         public async Task PostCategory_ValidCategory_ShouldReturnOK()
         {
-            MockData();
             var categoryDto = new CategoryDto { Id = 3, Name ="name1"};
 
             var resultFromController = await _categoryController.PostCategory(categoryDto);
