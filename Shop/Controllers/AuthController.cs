@@ -3,13 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Shop.Dtos;
 using Shop.Models;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using Shop.Services;
 using System.Threading.Tasks;
 
 namespace Shop.Controllers
@@ -25,13 +21,15 @@ namespace Shop.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
+        private readonly ITokenGenerator _tokenGenerator;
 
-        public AuthController(IConfiguration config,UserManager<User> userManager,SignInManager<User> signInManager,IMapper mapper)
-        {   
+        public AuthController(IConfiguration config, UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, ITokenGenerator tokenGenarator)
+        {
             _config = config;
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _tokenGenerator = tokenGenarator;
         }
 
         /// <summary>
@@ -44,17 +42,17 @@ namespace Shop.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserDto userDto)
         {
-            var userExists = _userManager.FindByNameAsync(userDto.UserName);
-            if(userExists!=null)
+            var userExists = await _userManager.FindByNameAsync(userDto.UserName);
+            if (userExists != null)
             {
-                return StatusCode(409, $"User '{userDto.UserName}' already exists.");
+                return StatusCode(409, $"User {userDto.UserName} already exists.");
             }
 
             var userToCreate = _mapper.Map<User>(userDto);
 
             var result = await _userManager.CreateAsync(userToCreate, userDto.Password);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
@@ -83,34 +81,10 @@ namespace Shop.Controllers
 
             return Ok(new
             {
-                token = GenerateToken(userInDb), 
-            });   
+                token = _tokenGenerator.GenerateToken(userInDb, _config),
+            });
         }
 
-        private string GenerateToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName),
-            };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(1),
-                SigningCredentials = cred
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
-        }
     }
 }

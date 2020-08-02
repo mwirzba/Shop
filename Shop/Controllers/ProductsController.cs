@@ -72,7 +72,7 @@ namespace Shop.Controllers
         /// <response code="404">Not found products in database</response>
         /// <response code="400">Exception during database update or other proccess</response>
         [HttpGet]
-        public async Task<IActionResult> GetProductsByPageAsync([FromQuery]PaginationQuery paginationQuery,[FromQuery] FilterParams filterParams)
+        public async Task<IActionResult> GetProductsByPageAsync([FromQuery]PaginationQuery paginationQuery,[FromQuery] FilterProductParams filterParams)
         {
             try
             {

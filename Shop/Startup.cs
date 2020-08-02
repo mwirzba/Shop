@@ -128,15 +128,6 @@ namespace Shop
 
                 opt.Filters.Add(new AuthorizeFilter(policy));
             }).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
-
-
-
-            //services.AddAutoMapper(typeof(AutoMapperProfile));
-            //services.AddRazorPages();
-            //services.AddMvc(options =>
-            //{
-            //    options.EnableEndpointRouting = false;
-            //});
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -154,7 +145,6 @@ namespace Shop
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
-
 
 
             app.UseCors("MyPolicy");

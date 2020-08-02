@@ -4,49 +4,37 @@ using System;
 
 namespace Shop.ResponseHelpers
 {
-    public class FilterParams
+    public abstract class FilterParams
     {
+        /// <summary>
+        /// String used to search for products which contains it
+        /// </summary>
+        /// <example>'Asus'</example>
         [FromQuery(Name = "searchString")]
         public string SearchString { get; set; } = "";
 
-        [FromQuery(Name = "maxPrice")]
-        public long MaxPrice { get; set; }
-
-        [FromQuery(Name = "minPrice")]
-        public long MinPrice { get; set; }
-
+        /// <summary>
+        /// String that defines sorting type.
+        /// Can have 2 values: 'byName' or 'byPrice'
+        /// </summary>
         [FromQuery(Name = "sort")]
         public string Sort { get; set; }
 
+        /// <summary>
+        /// String that defines sorting order direction
+        /// True - ascending order , False -  descending order
+        /// </summary>
         [FromQuery(Name = "sortDirection")]
         public bool SortDirection { get; set; } = true;
-    }
 
-    public static class FilterCheckMethods
-    {
         public static bool HasSort(FilterParams filterParams)
         {
-            if (filterParams.Sort != null && 
+            if (filterParams.Sort != null &&
                 (string.Equals(SortingTypes.ByName, filterParams.Sort, StringComparison.CurrentCultureIgnoreCase) ||
                 string.Equals(SortingTypes.ByPrice, filterParams.Sort, StringComparison.CurrentCultureIgnoreCase)))
                 return true;
             return false;
         }
-
-        public static bool HasValidPriceRange(FilterParams filterParams)
-        {
-            if (filterParams.MaxPrice > filterParams.MinPrice && filterParams.MaxPrice != 0)
-                return true;
-            return false;
-        }
-
-        public static bool HasSearchStringAndValidPriceRange(FilterParams filterParams)
-        {
-            if (filterParams.SearchString != null && filterParams.SearchString.Length > 1  && filterParams.MaxPrice >= filterParams.MinPrice)
-                return true;
-            return false;
-        }
-
         internal static bool HasSearchString(FilterParams filterParams)
         {
             if (filterParams.SearchString != null && filterParams.SearchString.Length > 1)

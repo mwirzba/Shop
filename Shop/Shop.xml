@@ -17,7 +17,16 @@
             <response code="200">Account created</response>
             <response code="409">User name is already used. Account has not been created.</response>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Shop.Controllers.AuthController.Login(Shop.Dtos.UserDto)" -->
+        <member name="M:Shop.Controllers.AuthController.Login(Shop.Dtos.UserDto)">
+            <summary>
+            Allows user to login
+            </summary>
+            <param name="userDto">The user account dto which contains user login and password</param>
+            <response code="200">
+            User has been logged. Token is returned which has to be passed in actions that require to be logged.
+            </response>
+            <response code="401">Invalid user name or password</response>
+        </member>
         <member name="T:Shop.Controllers.CategoriesController">
             <summary>
             Controller responsible for product categories CRUD
@@ -180,7 +189,7 @@
             <response code="422">Missing product in body</response>
             <response code="400">Exception during database update or other proccess</response>
         </member>
-        <member name="M:Shop.Controllers.ProductsController.GetProductsByPageAsync(Shop.ResponseHelpers.PaginationQuery,Shop.ResponseHelpers.FilterParams)">
+        <member name="M:Shop.Controllers.ProductsController.GetProductsByPageAsync(Shop.ResponseHelpers.PaginationQuery,Shop.ResponseHelpers.FilterProductParams)">
             <summary>
              Returnes paginaged list of produtcs
             </summary>
@@ -245,6 +254,39 @@
             <param name="userDto">User data</param>
             <response code="200">Returned user informations</response>
             <response code="401">User is not logged</response>
+        </member>
+        <member name="P:Shop.ResponseHelpers.FilterParams.SearchString">
+            <summary>
+            String used to search for products which contains it
+            </summary>
+            <example>'Asus'</example>
+        </member>
+        <member name="P:Shop.ResponseHelpers.FilterParams.Sort">
+            <summary>
+            String that defines sorting type.
+            Can have 2 values: 'byName' or 'byPrice'
+            </summary>
+        </member>
+        <member name="P:Shop.ResponseHelpers.FilterParams.SortDirection">
+            <summary>
+            String that defines sorting order direction
+            True - ascending order , False -  descending order
+            </summary>
+        </member>
+        <member name="T:Shop.ResponseHelpers.FilterProductParams">
+            <summary>
+            Data passed in query used for filtering products list 
+            </summary>
+        </member>
+        <member name="P:Shop.ResponseHelpers.FilterProductParams.MaxPrice">
+            <summary>
+            Max price of product
+            </summary>
+        </member>
+        <member name="P:Shop.ResponseHelpers.FilterProductParams.MinPrice">
+            <summary>
+            Minimum price of product
+            </summary>
         </member>
     </members>
 </doc>

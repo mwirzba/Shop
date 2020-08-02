@@ -49,45 +49,47 @@ namespace Shop.Data.Repositories
         {
             IQueryable<Product> products = ApplicationDbContext.Products
                                             .Include(a => a.Category);
+            FilterProductParams filterProductParams = filterParams as FilterProductParams;
 
-            if (filterParams.MaxPrice == 0)
-                filterParams.MaxPrice = long.MaxValue;
 
-            if (FilterCheckMethods.HasSearchStringAndValidPriceRange(filterParams))
+            if (filterProductParams.MaxPrice == 0)
+                filterProductParams.MaxPrice = long.MaxValue;
+
+            if (FilterProductParams.HasSearchStringAndValidPriceRange(filterProductParams))
             {
 
-                products = products.Where(p => p.Name.Contains(filterParams.SearchString) && (p.Price >= filterParams.MinPrice && p.Price <= filterParams.MaxPrice));
+                products = products.Where(p => p.Name.Contains(filterProductParams.SearchString) && (p.Price >= filterProductParams.MinPrice && p.Price <= filterProductParams.MaxPrice));
             }
-            else if (FilterCheckMethods.HasSearchString(filterParams))
+            else if (FilterProductParams.HasSearchString(filterProductParams))
             {
-                products = products.Where(p => p.Name.Contains(filterParams.SearchString));
+                products = products.Where(p => p.Name.Contains(filterProductParams.SearchString));
             }
-            else if(FilterCheckMethods.HasValidPriceRange(filterParams))
+            else if(FilterProductParams.HasValidPriceRange(filterProductParams))
             {
-                products = products.Where(p => p.Price >= filterParams.MinPrice
-                            && p.Price <= filterParams.MaxPrice);
+                products = products.Where(p => p.Price >= filterProductParams.MinPrice
+                            && p.Price <= filterProductParams.MaxPrice);
             }
           
-            if(FilterCheckMethods.HasSort(filterParams))
+            if(FilterParams.HasSort(filterProductParams))
             {
-                if (string.Equals(SortingTypes.ByName, filterParams.Sort,
-                 System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == true)
+                if (string.Equals(SortingTypes.ByName, filterProductParams.Sort,
+                 System.StringComparison.CurrentCultureIgnoreCase) && filterProductParams.SortDirection == true)
                 {
                     products = products.OrderBy(p => p.Name);
                 }
-                else if (string.Equals(SortingTypes.ByName, filterParams.Sort,
-                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == false)
+                else if (string.Equals(SortingTypes.ByName, filterProductParams.Sort,
+                    System.StringComparison.CurrentCultureIgnoreCase) && filterProductParams.SortDirection == false)
                 {
                     products = products.OrderByDescending(p => p.Name);
                 }
 
-                else if (string.Equals(SortingTypes.ByPrice, filterParams.Sort,
-                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == true)
+                else if (string.Equals(SortingTypes.ByPrice, filterProductParams.Sort,
+                    System.StringComparison.CurrentCultureIgnoreCase) && filterProductParams.SortDirection == true)
                 {
                     products = products.OrderBy(p => p.Price);
                 }
-                else if (string.Equals(SortingTypes.ByPrice, filterParams.Sort,
-                    System.StringComparison.CurrentCultureIgnoreCase) && filterParams.SortDirection == false)
+                else if (string.Equals(SortingTypes.ByPrice, filterProductParams.Sort,
+                    System.StringComparison.CurrentCultureIgnoreCase) && filterProductParams.SortDirection == false)
                 {
                     products = products.OrderByDescending(p => p.Price);
                 }
