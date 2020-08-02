@@ -9,8 +9,9 @@ I learned:
 * How to implement generic repository pattern to create easy to read code and short controllers
 * How to implement Dto pattern and use it
 * How to use automapper
-* How to authenticate client using token autherntication - JWT
+* How to authenticate client using token authentication - JWT
 * How to write tests using NUnit and mocking data with Moq framework
 * How to validate data using Fluent Validation framework
+* How to use swagger to create Web API documentation
 
 
