@@ -1,17 +1,39 @@
-# Shop
+# SHOP
 Web API created in ASP.NET Core 3.0
 
-This project has been created to learn .NET Core API.
-Durning project I learned important skills in  backend - frontend comunication
+This project has been created to learn ASP.NET Core API.
+While creating this project I learned best coding practices and many useful libraries.
 
-I learned:
-* How to write web api controllers
-* How to implement generic repository pattern to create easy to read code and short controllers
-* How to implement Dto pattern and use it
-* How to use automapper
-* How to authenticate client using token authentication - JWT
-* How to write tests using NUnit and mocking data with Moq framework
-* How to validate data using Fluent Validation framework
-* How to use swagger to create Web API documentation
+## GENERIC REPOSITORY PATTERN
+In this project I used generic repository pattern.
+All calls to database in *Entity Frameworks* has been placed in repositories.
+* Thanks to this pattern code in controllers is more readable and I do not have to reapeat same code.
+* Thanks to repositories interfaces it is also easier to write unit tests.
+
+## DOMAIN TRANSFER OBJECT (DTO)
+To transfer data beetween API and Client I use DTO
+ * It allows to seperate models used in database from client 
+ * It also allows to flatten complicated objects
+
+## AUTOMAPPER
+* Using automapper is the best way to make good use of DTO pattern and make code shorter and less complicated.
+
+
+## DATA VALIDATION USING FLUENT VALIDATION LIBRARY
+ * This library allows to readable create validation rules
+
+## AUTHORIZATION USING JWT TOKENS
+
+## UNIT TESTS 
+ * Good unit tests should be short,easy to read and should check one thing
+ * I wrote unit tests for each controller using *NUnit*  framework and *Moq* Framework
+ * I used *Fluent Assertions* Framework: 
+     > “With Fluent Assertions, the assertions look beautiful, natural and, most importantly, extremely readable”
+
+## SWAGGER 
+* Good tool during WEB API creation
+* Great documentation for client
+
+
 
 
