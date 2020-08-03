@@ -127,5 +127,31 @@ namespace Shop.Tests
             Assert.IsTrue(HasProperty(conflictResult.Value, "token"));
         }
 
+        [Test]
+        public async Task Login_IfUserDataIsValid_ShouldReturn_OKResultWithGeneratedToken()
+        {
+
+            var newUser = new User
+            {
+                Id = "asdasd",
+                UserName = "user1"
+            };
+            _userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(newUser);
+            _signInManagerMock.Setup(m => m.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false)).ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+
+
+            UserDto userDto = new UserDto
+            {
+                UserName = "user1",
+                Password = "123"
+            };
+
+            var resultFromController = await _authController.Login(userDto);
+            var conflictResult = resultFromController as OkObjectResult;
+
+            conflictResult.StatusCode.Should().Be(StatusCodes.Status200OK);
+            Assert.IsTrue(HasProperty(conflictResult.Value, "token"));
+        }
+
     }
 }
