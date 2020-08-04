@@ -254,6 +254,7 @@
             <param name="userDto">User data</param>
             <response code="200">Returned user informations</response>
             <response code="401">User is not logged</response>
+            <response code="409">"User name is already used"</response>
         </member>
         <member name="P:Shop.ResponseHelpers.FilterParams.SearchString">
             <summary>
