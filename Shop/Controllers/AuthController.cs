@@ -74,6 +74,11 @@ namespace Shop.Controllers
         {
             var userInDb = await _userManager.FindByNameAsync(userDto.UserName);
 
+            if (userInDb ==  null)
+            {
+                return NotFound();
+            }
+
             var result = await _signInManager.CheckPasswordSignInAsync(userInDb, userDto.Password, false);
 
             if (!result.Succeeded)

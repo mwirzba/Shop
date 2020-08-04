@@ -45,12 +45,6 @@ namespace Shop.Tests
             return config;
         }
 
-        [OneTimeSetUp]
-        public void Initialize()
-        {
-            
-            //_userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).Returns(true)
-        }
 
         [Test]
         public async Task Register_IfUserNameIsNotUsed_RegisterNewUser_AndThen_ShouldReturn_Ok()
@@ -75,8 +69,13 @@ namespace Shop.Tests
         [Test]
         public async Task Register_IfUserNameIsUsed_ShouldReturn_StatusCode409WithValidErrorMessage()
         {
+            var newUser = new User
+            {
+                Id = "asdasd",
+                UserName = "user1"
+            };
 
-            _userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(It.IsAny<User>());
+            _userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(newUser);
             _userManagerMock.Setup(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
            
 
@@ -121,23 +120,44 @@ namespace Shop.Tests
             };
 
             var resultFromController = await _authController.Login(userDto);
-            var conflictResult = resultFromController as OkObjectResult;
+            var okResult = resultFromController as OkObjectResult;
 
-            conflictResult.StatusCode.Should().Be(StatusCodes.Status200OK);
-            Assert.IsTrue(HasProperty(conflictResult.Value, "token"));
+            //Assert
+            okResult.Should().NotBeNull();
+            okResult.StatusCode.Should().Be(StatusCodes.Status200OK);
+            Assert.IsTrue(HasProperty(okResult.Value, "token"));
         }
 
         [Test]
-        public async Task Login_IfUserDataIsValid_ShouldReturn_OKResultWithGeneratedToken()
+        public async Task Login_IfUserWithUserNameNotExists_ShouldReturnNotFound()
         {
+            _userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync((User)null);
+            
+            UserDto userDto = new UserDto
+            {
+                UserName = "user1",
+                Password = "123"
+            };
 
+            var resultFromController = await _authController.Login(userDto);
+            var notFoundResult = resultFromController as NotFoundResult;
+
+            //Assert
+            notFoundResult.Should().NotBeNull();
+            notFoundResult.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        }
+
+        [Test]
+        public async Task Login_PasswordInvalid_ShouldReturnUnathorized()
+        {
             var newUser = new User
             {
                 Id = "asdasd",
                 UserName = "user1"
             };
+
             _userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(newUser);
-            _signInManagerMock.Setup(m => m.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false)).ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+            _signInManagerMock.Setup(m => m.CheckPasswordSignInAsync(It.IsAny<User>(), It.IsAny<string>(), false)).ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
 
             UserDto userDto = new UserDto
@@ -147,10 +167,11 @@ namespace Shop.Tests
             };
 
             var resultFromController = await _authController.Login(userDto);
-            var conflictResult = resultFromController as OkObjectResult;
+            var unathorizedResult = resultFromController as UnauthorizedResult;
 
-            conflictResult.StatusCode.Should().Be(StatusCodes.Status200OK);
-            Assert.IsTrue(HasProperty(conflictResult.Value, "token"));
+            //Assert
+            unathorizedResult.Should().NotBeNull();
+            unathorizedResult.StatusCode.Should().Be(StatusCodes.Status401Unauthorized);
         }
 
     }
