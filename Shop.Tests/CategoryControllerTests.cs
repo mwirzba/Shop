@@ -8,6 +8,7 @@ using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Dtos;
 using Shop.Models;
+using Shop.Tests.Bulders;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -25,30 +26,20 @@ namespace Shop.Tests
         private Mock<ICategoryRepository> _categoriesRepo;
         private CategoriesController _categoryController;
 
-        [OneTimeSetUp]
-        private void MockData()
+        [SetUp]
+        public void MockData()
         {
             _mock = GetConfiguredMockObject();
-            _categoryController = new CategoriesController(_mock.Object, new Mapper(CreateConfiguration()));
-        }
-
-        private MapperConfiguration CreateConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new AutoMapperProfile());
-            });
-
-            return config;
+            _categoryController = new CategoriesController(_mock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
         }
 
         private Mock<IUnitOfWork> GetConfiguredMockObject()
         {
             Mock<IUnitOfWork> mock = new Mock<IUnitOfWork>();
             var categories = new List<Category>
-            {   
-               new Category {Id = 1,Name = "Cat1"},
-               new Category {Id = 2,Name = "Cat2"}
+            {
+               A.Category.WithId(1).WithName("cat1"),
+               A.Category.WithId(2).WithName("cat2"),
             }; 
             _categoriesRepo.Setup(c => c.GetAllAsync()).ReturnsAsync(categories);
             _categoriesRepo.Setup(p => p.GetAsync(1)).ReturnsAsync(categories[0]);
@@ -64,8 +55,8 @@ namespace Shop.Tests
         {
             return new List<CategoryDto>
             {
-               new CategoryDto {Id = 1,Name = "Cat1"},
-               new CategoryDto {Id = 2,Name = "Cat2"}
+               new CategoryDto {Id = 1,Name = "cat1"},
+               new CategoryDto {Id = 2,Name = "cat2"}
             };
         }
 

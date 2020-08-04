@@ -13,6 +13,7 @@ using Shop.ResponseHelpers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Shop.Tests.Bulders;
 
 namespace Shop.Tests
 {
@@ -25,10 +26,11 @@ namespace Shop.Tests
             _categoriesRepo = new Mock<ICategoryRepository>();       
         }
 
-        private void MockData()
+        [SetUp]
+        public void MockData()
         {
             _mock = GetConfiguredMockObject();
-            _productController = new ProductsController(_mock.Object, new Mapper(CreateConfiguration()));
+            _productController = new ProductsController(_mock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
         }
 
         private Mock<IUnitOfWork> _mock;
@@ -36,35 +38,21 @@ namespace Shop.Tests
         private Mock<ICategoryRepository> _categoriesRepo;
         private ProductsController _productController;
 
-
-        private MapperConfiguration CreateConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new AutoMapperProfile());
-            });
-
-            return config;
-        }
-
         private Mock<IUnitOfWork> GetConfiguredMockObject()
         {
             Mock<IUnitOfWork> mock = new Mock<IUnitOfWork>();
-            _categoriesRepo.Setup(c => c.GetAllAsync()).ReturnsAsync(new List<Category>
-            {
-               new Category {Id = 1,Name = "Cat1"},
-               new Category {Id = 2,Name = "Cat2"}
-            }); 
+            _categoriesRepo.Setup(c => c.GetAllAsync()).
+                ReturnsAsync(
+                    new List<Category>
+                    {
+                        A.Category.WithId(1).WithName("Cat1"),
+                        A.Category.WithId(2).WithName("Cat1")
+                    }); 
             var productsList = new List<Product>
             {
-               new Product {Id =1,Name="prod1",CategoryId = 1 },
-               new Product {Id =2,Name="prod2",CategoryId = 2 },
-               new Product {Id =3,Name="prod3",CategoryId = 2 },
-               new Product {Id =3,Name="prod4",CategoryId = 2 },
-               new Product {Id =4,Name="prod5",CategoryId = 2 },
-               new Product {Id =5,Name="prod6",CategoryId = 2 },
-               new Product {Id =6,Name="prod7",CategoryId = 2 },
-               new Product {Id =7,Name="prod8",CategoryId = 2 }
+               A.Product.WithId(1).WithName("prod1"),
+               A.Product.WithId(2).WithName("prod2"),
+               A.Product.WithId(2).WithName("prod2")
             };
             var pagedList = new PagedList<Product>(productsList,7,1,5);
 
@@ -86,12 +74,7 @@ namespace Shop.Tests
             {
                new ProductDto {Id =1,Name="prod1",CategoryId = 1 },
                new ProductDto {Id =2,Name="prod2",CategoryId = 2 },
-               new ProductDto {Id =3,Name="prod3",CategoryId = 2 },
-               new ProductDto {Id =3,Name="prod4",CategoryId = 2 },
-               new ProductDto {Id =4,Name="prod5",CategoryId = 2 },
-               new ProductDto {Id =5,Name="prod6",CategoryId = 2 },
-               new ProductDto {Id =6,Name="prod7",CategoryId = 2 },
-               new ProductDto {Id =7,Name="prod8",CategoryId = 2 }
+               new ProductDto {Id =3,Name="prod3",CategoryId = 2 }
             };
         }
 
@@ -99,7 +82,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetProductsAsync_ShouldReturnAllProductsDto()
         {
-            MockData();
             var resultFromController = await _productController.GetProductsAsync();
             var result = resultFromController as OkObjectResult;
             List<ProductDto> productsList = result.Value as List<ProductDto>;
@@ -112,7 +94,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetProductsAsync_IfRepoReturnsNull_ShouldReturnNotFound()
         {
-
             var emptyProductsList = new List<Product>();
             _productRepo.Setup(p => p.GetProductsWthCategoriesAsync()).ReturnsAsync((IEnumerable<Product>)null);
             var resultFromController = await _productController.GetProductsAsync();
@@ -125,7 +106,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetProductsAsync_ShouldReturnOk()
         {
-            MockData();
             var resultFromController = await _productController.GetProductsAsync();
             var result = resultFromController as OkObjectResult;
 
@@ -137,8 +117,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetProductAsync_ValidProductId_ShouldReturnProductDto()
         {
-
-            MockData();
             var resultFromController = await _productController.GetProductAsync(1);
             var okResult = resultFromController as OkObjectResult;
             ProductDto productDto = okResult.Value as ProductDto;
@@ -153,7 +131,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetProductAsync_ValidProductId_ShouldReturnOk()
         {
-            MockData();
             var resultFromController = await _productController.GetProductAsync(1);
             var result = resultFromController as OkObjectResult;
 
@@ -165,7 +142,6 @@ namespace Shop.Tests
         [Test]
         public async Task GetProductAsync_InValidProductId_ShouldReturnNotFound()
         {
-            MockData();
             var resultFromController = await _productController.GetProductAsync(2);
             var result = resultFromController as NotFoundResult;
 
@@ -177,11 +153,10 @@ namespace Shop.Tests
         [Test]
         public async Task PostProductAsync_ValidProduct_ShouldReturnOK()
         {
-            MockData();
             var productDto  = new ProductDto { Id = 3,Price=1, CategoryId = 1 };
 
             var resultFromController = await _productController.PostProductAsync(productDto);
-            var result = resultFromController as OkObjectResult;
+            var result = resultFromController as OkResult;
 
             //Assert
             result.Should().NotBeNull();
@@ -192,7 +167,6 @@ namespace Shop.Tests
         [Test]
         public async Task PostProductAsync_NullProduct_ShouldReturnBadRequest()
         {
-            MockData();
             var resultFromController = await _productController.PostProductAsync(null);
             var result = resultFromController as BadRequestResult;
 
@@ -203,11 +177,10 @@ namespace Shop.Tests
 
 
         [Test]
-        public async Task EditProductAsync_ValidProduct_ShouldReturnOK()
+        public async Task PutProductAsync_ValidProduct_ShouldReturnOK()
         {
-            MockData();
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
-            ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
+            ProductsController productController = new ProductsController(mock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
             var updatedProduct= new ProductDto { Id = 1, Name = "prodnew", CategoryId = 3 };
            
             var resultFromController = await productController.PutProductAsync(updatedProduct,1);
@@ -215,21 +188,20 @@ namespace Shop.Tests
 
             //Assert
             result.Should().NotBeNull();
-            result.Should().Be(StatusCodes.Status204NoContent);
+            result.StatusCode.Should().Be(StatusCodes.Status204NoContent);
         }
 
         [Test]
         public async Task DeleteProductAsync_ValidId_ShouldReturn200StatusCode()
         {
-            MockData();
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
-            ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
+            ProductsController productController = new ProductsController(mock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
             var resultFromController = await productController.DeleteProductAsync(1);
             var result = resultFromController as OkResult;
 
             //Assert
             result.Should().NotBeNull();
-            result.Should().Be(StatusCodes.Status200OK);
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
 
         }
 
@@ -237,15 +209,14 @@ namespace Shop.Tests
         [Test]
         public async Task DeleteProductAsync_InValidId_ShouldReturnNotFound()
         {
-            MockData();
             Mock<IUnitOfWork> mock = GetConfiguredMockObject();
-            ProductsController productController = new ProductsController(mock.Object, new Mapper(CreateConfiguration()));
+            ProductsController productController = new ProductsController(mock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
             var resultFromController = await productController.DeleteProductAsync(2);
             var result = resultFromController as NotFoundResult;
 
             //Assert
             result.Should().NotBeNull();
-            result.Should().Be(StatusCodes.Status404NotFound);
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
     }
 }

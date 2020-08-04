@@ -22,7 +22,6 @@ namespace Shop.Tests
         private Mock<FakeUserManager> _userManagerMock;
         private Mock<FakeSignInManager> _signInManagerMock;
         private AuthController _authController;
-        private Mock<IConfiguration> _configuration;
         private Mock<ITokenGenerator> _tokenGenetaror;
 
         public AuthControllerTests()
@@ -30,21 +29,16 @@ namespace Shop.Tests
             _userManagerMock = new Mock<FakeUserManager>();
             _signInManagerMock = new Mock<FakeSignInManager>();
             _tokenGenetaror = new Mock<ITokenGenerator>();
-            _configuration = new Mock<IConfiguration>();
-            _tokenGenetaror.Setup(t => t.GenerateToken(It.IsAny<User>(),It.IsAny<IConfiguration>())).Returns("asduykasgdyukasfgasdkuy");
-            _authController = new AuthController(new Mock<IConfiguration>().Object, _userManagerMock.Object, _signInManagerMock.Object, new Mapper(CreateConfiguration()), _tokenGenetaror.Object);
+            _tokenGenetaror.Setup(t => t.GenerateToken(It.IsAny<User>(),
+                It.IsAny<IConfiguration>())).Returns("asduykasgdyukasfgasdkuy");
+
+            _authController = new AuthController(
+                new Mock<IConfiguration>().Object,
+                _userManagerMock.Object, _signInManagerMock.Object, 
+                new Mapper(MapperHelpers.GetMapperConfiguration()),
+                _tokenGenetaror.Object
+            );
         }
-
-        private MapperConfiguration CreateConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new AutoMapperProfile());
-            });
-
-            return config;
-        }
-
 
         [Test]
         public async Task Register_IfUserNameIsNotUsed_RegisterNewUser_AndThen_ShouldReturn_Ok()

@@ -9,6 +9,7 @@ using Shop.Controllers;
 using Shop.Data;
 using Shop.Dtos;
 using Shop.Models;
+using Shop.Tests.Bulders;
 using Shop.Tests.MockClasses;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -25,28 +26,15 @@ namespace Shop.Tests
         public UserControllerTests()
         {
             _userManagerMock = new Mock<FakeUserManager>();
-            _userController = new UserController(_userManagerMock.Object, new Mapper(CreateConfiguration()));
+            _userController = new UserController(_userManagerMock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
             _httpContext = new Mock<HttpContext>(); 
-        }
-
-        private MapperConfiguration CreateConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new AutoMapperProfile());
-            });
-
-            return config;
         }
 
         [Test]
         public async Task GetUserInformations_AuthorizedUser_ShouldReturnOkResultWithUserData()
         {
-            var userInDb = new User
-            {
-                Id = "hjgsfdghfd",
-                UserName = "user1"
-            };
+            User userInDb = A.User.WithId("123")
+                                  .WithUserName("user1");
 
             _httpContext.Setup(d => d.User.Identity.IsAuthenticated).Returns(true);
             _userController.ControllerContext = new ControllerContext
@@ -85,11 +73,8 @@ namespace Shop.Tests
         [Test]
         public async Task PatchUserInformations_LggedUserAndCorrectDataWithNotUsedUserName_ShouldReturnOkResult()
         {
-            var userInDb = new User
-            {
-                Id = "hjgsfdghfd",
-                UserName = "user1"
-            };
+            User userInDb = A.User.WithId("123")
+                                  .WithUserName("user1");
 
             var userDto = new UserDto
             {
@@ -118,19 +103,13 @@ namespace Shop.Tests
         [Test]
         public async Task PatchUserInformations_AuthorizedUserAndCorrectDataWithUsedUserName_ShouldReturnConflictResultWithMessage()
         {
-            var userInDb = new User
-            {
-                Id = "hjgsfdghfd",
-                UserName = "user1"
-            };
+            User userInDb = A.User.WithId("123")
+                                  .WithUserName("user1");
 
-            var userInDb2 = new User
-            {
-                Id = "hjgsfdghfdaqd",
-                UserName = "user2"
-            };
+            User userInDb2 = A.User.WithId("1233")
+                                  .WithUserName("user2");
 
-            var userDto = new UserDto
+            UserDto userDto = new UserDto
             {
                 UserName = "user3"
             };

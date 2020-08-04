@@ -19,8 +19,4 @@
     <ProjectReference Include="..\Shop\Shop.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
 </Project>
