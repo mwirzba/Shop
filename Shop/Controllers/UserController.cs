@@ -67,7 +67,7 @@ namespace Shop.Controllers
 
                 if (userWithChoosenUserName != null)
                 {
-                    return StatusCode(409, $"User '{userDto.UserName}' already exists.");
+                    return Conflict($"User '{userDto.UserName}' already exists.");
                 }
             }
 
