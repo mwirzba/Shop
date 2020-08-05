@@ -59,12 +59,17 @@ namespace Shop.Controllers
         /// <param name="id">Order id</param>
         /// <response code="200">Order returned</response>
         /// <response code="400">Exception occurred</response>
+        /// <response code="404">Order with given id not found</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderAsync([FromQuery]long id)
         {
             try
             {
                 var orderInDb = await _unitOfWork.Orders.GetFullOrder(id);
+                if (orderInDb ==  null)
+                {
+                    return NotFound();
+                }
                 var orderDto = _mapper.Map<Order, OrderDto>(orderInDb);
                 return Ok(orderDto);
             }
@@ -90,7 +95,6 @@ namespace Shop.Controllers
             {
                 return UnprocessableEntity();
             }
-
 
             var orderToSave = _mapper.Map<OrderDto, Order>(order);
             orderToSave.CartLines = (ICollection<CartLine>)_mapper.Map<IEnumerable<CartLineDto>, IEnumerable<CartLine>>(order.CartLines);

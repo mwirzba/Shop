@@ -6,7 +6,7 @@ namespace Shop.Dtos
 {
     public class OrderDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public ICollection<CartLineDto> CartLines { get; set; }
         public string Name { get; set; }
         public string SurName { get; set; }
@@ -18,6 +18,6 @@ namespace Shop.Dtos
         public bool GiftWrap { get; set; }
         public int StatusId { get; set; }
         public string StatusName { get; set; }
-        public string UserDto { get; set; }
+        public string UserName { get; set; }
     }
 }
