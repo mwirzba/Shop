@@ -72,9 +72,9 @@ namespace Shop.Tests
         {
             return new List<ProductDto>
             {
-               new ProductDto {Id =1,Name="prod1",CategoryId = 1 },
-               new ProductDto {Id =2,Name="prod2",CategoryId = 2 },
-               new ProductDto {Id =3,Name="prod3",CategoryId = 2 }
+               A.ProductDto.WithId(1).WithName("prod1").WithCategoryId(1),
+               A.ProductDto.WithId(2).WithName("prod2").WithCategoryId(1),
+               A.ProductDto.WithId(3).WithName("prod3").WithCategoryId(1)
             };
         }
 
@@ -153,7 +153,7 @@ namespace Shop.Tests
         [Test]
         public async Task PostProductAsync_ValidProduct_ShouldReturnOK()
         {
-            var productDto  = new ProductDto { Id = 3,Price=1, CategoryId = 1 };
+            ProductDto productDto  = A.ProductDto.WithId(3);
 
             var resultFromController = await _productController.PostProductAsync(productDto);
             var result = resultFromController as OkResult;
@@ -179,11 +179,11 @@ namespace Shop.Tests
         [Test]
         public async Task PutProductAsync_ValidProduct_ShouldReturnOK()
         {
-            Mock<IUnitOfWork> mock = GetConfiguredMockObject();
-            ProductsController productController = new ProductsController(mock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
-            var updatedProduct= new ProductDto { Id = 1, Name = "prodnew", CategoryId = 3 };
-           
-            var resultFromController = await productController.PutProductAsync(updatedProduct,1);
+            var updatedProduct = A.ProductDto.WithId(1)
+                                             .WithName("prodnew")
+                                             .WithCategoryId(3);
+
+            var resultFromController = await _productController.PutProductAsync(updatedProduct,1);
             var result = resultFromController as NoContentResult;
 
             //Assert
@@ -194,9 +194,7 @@ namespace Shop.Tests
         [Test]
         public async Task DeleteProductAsync_ValidId_ShouldReturn200StatusCode()
         {
-            Mock<IUnitOfWork> mock = GetConfiguredMockObject();
-            ProductsController productController = new ProductsController(mock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
-            var resultFromController = await productController.DeleteProductAsync(1);
+            var resultFromController = await _productController.DeleteProductAsync(1);
             var result = resultFromController as OkResult;
 
             //Assert

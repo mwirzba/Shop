@@ -1,6 +1,4 @@
-﻿
-
-using Shop.Models;
+﻿using Shop.Models;
 
 namespace Shop.Tests.Bulders
 {
@@ -15,6 +13,12 @@ namespace Shop.Tests.Bulders
         public Userbuilder WithUserName(string userName)
         {
             _object.UserName = userName;
+            return this;
+        }
+
+        public Userbuilder WithEmail(string email)
+        {
+            _object.Email= email;
             return this;
         }
     }

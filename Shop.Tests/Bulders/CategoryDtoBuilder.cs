@@ -1,16 +1,16 @@
-﻿using Shop.Models;
+﻿using Shop.Dtos;
 
 namespace Shop.Tests.Bulders
 {
-    public class CategoryBuilder: Builder<Category>
+    public class CategoryDtoBuilder: Builder<CategoryDto>
     {
-        public CategoryBuilder WithName(string name)
+        public CategoryDtoBuilder WithName(string name)
         {
             _object.Name = name;
             return this;
         }
 
-        public CategoryBuilder WithId(int id)
+        public CategoryDtoBuilder WithId(int id)
         {
             _object.Id = id;
             return this;

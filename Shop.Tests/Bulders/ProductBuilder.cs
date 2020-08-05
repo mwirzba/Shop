@@ -1,6 +1,5 @@
 ﻿using Shop.Models;
 
-
 namespace Shop.Tests.Bulders
 {
     public class ProductBuilder: Builder<Product>

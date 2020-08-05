@@ -55,8 +55,8 @@ namespace Shop.Tests
         {
             return new List<CategoryDto>
             {
-               new CategoryDto {Id = 1,Name = "cat1"},
-               new CategoryDto {Id = 2,Name = "cat2"}
+               A.CategoryDto.WithId(1).WithName("cat1"),
+               A.CategoryDto.WithId(2).WithName("cat2")
             };
         }
 
@@ -129,7 +129,7 @@ namespace Shop.Tests
         [Test]
         public async Task PostCategory_ValidCategory_ShouldReturnOK()
         {
-            var categoryDto = new CategoryDto { Id = 3, Name ="name1"};
+            CategoryDto categoryDto = A.CategoryDto.WithId(1).WithName("cat1");
 
             var resultFromController = await _categoryController.PostCategory(categoryDto);
             var okResult = resultFromController as OkResult;
