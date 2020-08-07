@@ -88,7 +88,7 @@ namespace Shop.Controllers
         /// <response code="422">Missing order paramether</response>
         /// <response code="400">Exception during database update happened or another exception</response>
         [HttpPost]
-        public async Task<IActionResult> PostOrderAsync([FromBody]OrderDto order)
+        public async Task<IActionResult> PostOrderAsync([FromBody]OrderRequest order)
         {
             
             if(order == null)
@@ -96,8 +96,8 @@ namespace Shop.Controllers
                 return UnprocessableEntity();
             }
 
-            var orderToSave = _mapper.Map<OrderDto, Order>(order);
-            orderToSave.CartLines = (ICollection<CartLine>)_mapper.Map<IEnumerable<CartLineDto>, IEnumerable<CartLine>>(order.CartLines);
+            var orderToSave = _mapper.Map<OrderRequest, Order>(order);
+            orderToSave.CartLines = (ICollection<CartLine>)_mapper.Map<IEnumerable<CartLineRequest>, IEnumerable<CartLine>>(order.CartLines);
             await _unitOfWork.Orders.AddAsync(orderToSave);
             if (User.Identity.IsAuthenticated)
             {
@@ -131,7 +131,7 @@ namespace Shop.Controllers
         /// <response code="400">Exception during database update happened or another exception</response>
         /// <response code="404">Order with given id not found</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderInformationsAsync([FromQuery]long id,[FromBody]OrderDto order)
+        public async Task<IActionResult> PutOrderInformationsAsync([FromQuery]long id,[FromBody]OrderRequest order)
         {
             if (order == null)
             {

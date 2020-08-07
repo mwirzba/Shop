@@ -42,6 +42,10 @@ namespace Shop.Data
             CreateMap<OrderStatus, OrderStatusDto>();
             CreateMap<OrderStatusDto, OrderStatus>();
 
+            CreateMap<OrderRequest, Order>();
+
+            CreateMap<CartLineRequest, CartLine>();
+
         }
     }
 }

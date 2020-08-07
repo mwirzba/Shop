@@ -7,7 +7,6 @@ using Shop.Controllers;
 using Shop.Models;
 using Shop.Tests.MockClasses;
 using System.Threading.Tasks;
-using Shop.Data;
 using Shop.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;

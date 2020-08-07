@@ -13,12 +13,14 @@ namespace Shop.Tests.Bulders
         public static Userbuilder User => new Userbuilder();
         public static ProductBuilder Product => new ProductBuilder();
         public static ProductDtoBuilder ProductDto => new ProductDtoBuilder();
+        public static CartLineRequestBuilder CartlineRequest => new CartLineRequestBuilder();
     }
 
     public static class An
     {
         public static OrderBuilder Order => new OrderBuilder();
         public static OrderDtoBuilder OrderDto => new OrderDtoBuilder();
+        public static OrderRequestBuilder OrderRequest => new OrderRequestBuilder();
     }
 
 

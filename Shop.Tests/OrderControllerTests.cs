@@ -99,7 +99,7 @@ namespace Shop.Tests
         }
 
         [Test]
-        public async Task PostOrderAsync_ValidOrderDto_ShouldOkStatus()
+        public async Task PostOrderAsync_ValidOrderRequest_ShouldOkStatus()
         {
             _unitOfWork.Setup(u => u.Orders.GetFullOrder(1)).ReturnsAsync((Order)null);
             _httpContext.Setup(d => d.User.Identity.IsAuthenticated).Returns(true);
@@ -116,17 +116,17 @@ namespace Shop.Tests
             ProductDto productDto1 = A.ProductDto.WithId(1).WithName("prod1");
             ProductDto productDto2 = A.ProductDto.WithId(2).WithName("prod2");
 
-            var cartLines = new CartLineDto[]
+            var cartLines = new CartLineRequest[]
             {
-                A.CartlineDto.WithId(1).WithQuantity(2).WithProduct(productDto1),
-                A.CartlineDto.WithId(2).WithQuantity(3).WithProduct(productDto2)
+                A.CartlineRequest.WithId(1).WithQuantity(2).WithProductId(1),
+                A.CartlineRequest.WithId(2).WithQuantity(3).WithProductId(2)
             };
 
-            OrderDto orderDto = An.OrderDto.WithCartLines(cartLines);
+            OrderRequest orderReq = An.OrderRequest.WithCartLines(cartLines);
             _userManagerMock.Setup(u => u.GetUserAsync(_httpContext.Object.User)).ReturnsAsync(user);
            
 
-            var result = await _orderController.PostOrderAsync(orderDto);
+            var result = await _orderController.PostOrderAsync(orderReq);
             var okResult = result as OkResult;
 
             //Assert
