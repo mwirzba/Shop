@@ -65,6 +65,20 @@ namespace Shop.Tests
         }
 
         [Test]
+        public async Task GetOrdersAsync_NoOrdersInDatabase_ShouldReturnNotFound()
+        {
+            _unitOfWork.Setup(u => u.Orders.GetOrdersWithLines()).ReturnsAsync((IEnumerable<Order>)null);
+
+            var result = await _orderController.GetOrdersAsync();
+            var notFoundResult = result as NotFoundResult;
+
+            //Assert
+            notFoundResult.Should().NotBeNull();
+            notFoundResult.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        }
+
+
+        [Test]
         public async Task GetOrderAsync_ValidOrderId_ShouldReturnOkObjectResultWithOrder()
         {
             Order order = An.Order

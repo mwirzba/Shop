@@ -1,18 +1,15 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using Shop.Controllers;
-using Shop.Data;
+using Shop.Data.Repositories;
 using Shop.Dtos;
 using Shop.Models;
 using Shop.Tests.Bulders;
 using Shop.Tests.MockClasses;
-using System.Security.Claims;
-using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Shop.Tests
@@ -23,10 +20,12 @@ namespace Shop.Tests
         private Mock<FakeUserManager> _userManagerMock;
         private UserController _userController;
         private Mock<HttpContext> _httpContext;
+        private Mock<IUnitOfWork> _unitOfWork;
         public UserControllerTests()
         {
+            _unitOfWork = new Mock<IUnitOfWork>();
             _userManagerMock = new Mock<FakeUserManager>();
-            _userController = new UserController(_userManagerMock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()));
+            _userController = new UserController(_userManagerMock.Object, new Mapper(MapperHelpers.GetMapperConfiguration()), _unitOfWork.Object);
             _httpContext = new Mock<HttpContext>(); 
         }
 

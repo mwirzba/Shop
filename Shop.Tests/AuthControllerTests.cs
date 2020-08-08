@@ -22,12 +22,14 @@ namespace Shop.Tests
         private Mock<FakeSignInManager> _signInManagerMock;
         private AuthController _authController;
         private Mock<ITokenGenerator> _tokenGenetaror;
+        private Mock<HttpContext> _httpContext;
 
         public AuthControllerTests()
         {
             _userManagerMock = new Mock<FakeUserManager>();
             _signInManagerMock = new Mock<FakeSignInManager>();
             _tokenGenetaror = new Mock<ITokenGenerator>();
+            _httpContext = new Mock<HttpContext>();
             _tokenGenetaror.Setup(t => t.GenerateToken(It.IsAny<User>(),
                 It.IsAny<IConfiguration>())).Returns("asduykasgdyukasfgasdkuy");
 
@@ -165,6 +167,26 @@ namespace Shop.Tests
             //Assert
             unathorizedResult.Should().NotBeNull();
             unathorizedResult.StatusCode.Should().Be(StatusCodes.Status401Unauthorized);
+        }
+
+        [Test]
+        public async Task Logout_AuthorizedUser_ShouldCall_SignOutAsyncAndReturnNoContentResult()
+        {
+            _httpContext.Setup(d => d.User.Identity.IsAuthenticated).Returns(true);
+            _authController.ControllerContext = new ControllerContext
+            {
+                HttpContext = _httpContext.Object
+            };
+
+            _signInManagerMock.Setup(s => s.SignOutAsync());
+            
+            var resultFromController = await _authController.Logout();
+            var noContentResult = resultFromController as NoContentResult;
+
+            //Assert
+            _signInManagerMock.Verify(m => m.SignOutAsync());
+            noContentResult.Should().NotBeNull();
+            noContentResult.StatusCode.Should().Be(StatusCodes.Status204NoContent);
         }
 
     }
