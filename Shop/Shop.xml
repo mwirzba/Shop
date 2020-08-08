@@ -27,6 +27,12 @@
             </response>
             <response code="401">Invalid user name or password</response>
         </member>
+        <member name="M:Shop.Controllers.AuthController.Logout">
+            <summary>
+            Allows user to logout
+            </summary>
+            <response code="204">User has been logged out.</response>
+        </member>
         <member name="T:Shop.Controllers.CategoriesController">
             <summary>
             Controller responsible for product categories CRUD
@@ -87,6 +93,7 @@
             </summary>
             <response code="200">Order rerurned</response>
             <response code="400">Exception occurred</response>
+            <response code="404">Orders in database not found</response>
         </member>
         <member name="M:Shop.Controllers.OrdersController.GetOrderAsync(System.Int64)">
             <summary>
@@ -106,7 +113,7 @@
             <response code="422">Missing order paramether</response>
             <response code="400">Exception during database update happened or another exception</response>
         </member>
-        <member name="M:Shop.Controllers.OrdersController.PutOrderInformationsAsync(System.Int64,Shop.Dtos.OrderDto)">
+        <member name="M:Shop.Controllers.OrdersController.PutOrderInformationsAsync(System.Int64,Shop.Dtos.OrderRequest)">
             <summary>
             Updates order
             </summary>
@@ -250,11 +257,19 @@
         </member>
         <member name="M:Shop.Controllers.UserController.PatchUserInformations(Shop.Dtos.UserDto)">
             <summary>
-            Returns user account informations
+            Updates user account informations
             </summary>
             <param name="userDto">User data</param>
             <response code="200">Returned user informations</response>
             <response code="401">User is not logged</response>
+        </member>
+        <member name="M:Shop.Controllers.UserController.GetUserOrders">
+            <summary>
+            Returns user orders list
+            </summary>
+            <response code="200">Returned user informations</response>
+            <response code="401">User is not logged</response>
+            <response code="404">User not found in database</response>
         </member>
         <member name="P:Shop.ResponseHelpers.FilterParams.SearchString">
             <summary>

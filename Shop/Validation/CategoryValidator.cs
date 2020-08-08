@@ -8,12 +8,10 @@ namespace Shop.Models
 {
     public class CategoryValidator : AbstractValidator<CategoryDto>
     {
-        private List<Category> categories;
-
+        private IUnitOfWork _unitOfWork;
         public CategoryValidator(IUnitOfWork unitOfWork)
         {
-            categories = (List<Category>)unitOfWork.Categories.GetAllAsync().Result;
-
+            _unitOfWork = unitOfWork;
             RuleFor(category => category.Name)
               .NotEmpty()
               .MinimumLength(2)
@@ -24,7 +22,7 @@ namespace Shop.Models
 
         public bool IsNameUnique(CategoryDto category, string newValue)
         {
-            var categoryInDb = categories.FirstOrDefault(c => c.Name == newValue && c.Id != category.Id);
+            var categoryInDb = _unitOfWork.Categories.SingleOrDefault(c => c.Name == category.Name);
 
             if (categoryInDb == null)
                 return true;

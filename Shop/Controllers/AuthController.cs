@@ -90,6 +90,23 @@ namespace Shop.Controllers
             });
         }
 
+        /// <summary>
+        /// Allows user to logout
+        /// </summary>
+        /// <response code="204">User has been logged out.</response>
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                await _signInManager.SignOutAsync();
+            }
+            
+
+            return NoContent();
+        }
+
 
     }
 }

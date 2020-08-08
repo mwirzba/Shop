@@ -49,7 +49,7 @@ namespace Shop.Controllers
         /// <response code="200">Found order status</response>
         /// <response code="404">Not Found order status</response>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderStatus([FromQuery]int id)
+        public async Task<IActionResult> GetOrderStatus(int id)
         {
             var orderStatus = await _unitOfWork.OrderStatuses.GetAsync(id);
 
@@ -74,7 +74,7 @@ namespace Shop.Controllers
         /// <response code="400">Wrong id of updated order is not equal to given id.</response>
         /// <response code="404">Not Found order status</response>
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateOrderStatus([FromQuery]int id,[FromBody]OrderStatusDto orderStatus)
+        public async Task<IActionResult> UpdateOrderStatus(int id,[FromBody]OrderStatusDto orderStatus)
         {
 
             if (orderStatus == null)

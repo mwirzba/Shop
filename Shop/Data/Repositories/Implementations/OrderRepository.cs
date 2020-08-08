@@ -50,6 +50,16 @@ namespace Shop.Data.Repositories.Implementations
                .Include(o => o.Status)
                .ToListAsync();
         }
+
+        public async Task<IEnumerable<Order>> GetUserOrders(string userId)
+        {
+            return await ApplicationDbContext.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.CartLines)
+                .ThenInclude(p => p.Product)
+                .Include(o => o.Status)
+                .ToListAsync();
+        }
     }
 }
  

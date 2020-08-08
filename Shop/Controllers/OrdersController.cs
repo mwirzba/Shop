@@ -37,18 +37,23 @@ namespace Shop.Controllers
         /// </summary>
         /// <response code="200">Order rerurned</response>
         /// <response code="400">Exception occurred</response>
+        /// <response code="404">Orders in database not found</response>
         [HttpGet]
         public async Task<IActionResult> GetOrdersAsync()
         {
             try
             {
                 var ordersInDb = await _unitOfWork.Orders.GetOrdersWithLines();
+                if(ordersInDb == null)
+                {
+                    return NotFound();
+                }
                 var ordersDto = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDto>>(ordersInDb);
                 return Ok(ordersDto);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest("Something went wrong");
+                return BadRequest(e.Message);
             }
 
         }
@@ -61,7 +66,7 @@ namespace Shop.Controllers
         /// <response code="400">Exception occurred</response>
         /// <response code="404">Order with given id not found</response>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderAsync([FromQuery]long id)
+        public async Task<IActionResult> GetOrderAsync(long id)
         {
             try
             {
@@ -73,9 +78,9 @@ namespace Shop.Controllers
                 var orderDto = _mapper.Map<Order, OrderDto>(orderInDb);
                 return Ok(orderDto);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest("Something went wrong");
+                return BadRequest(e.Message);
             }
         }
 
@@ -131,7 +136,7 @@ namespace Shop.Controllers
         /// <response code="400">Exception during database update happened or another exception</response>
         /// <response code="404">Order with given id not found</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderInformationsAsync([FromQuery]long id,[FromBody]OrderRequest order)
+        public async Task<IActionResult> PutOrderInformationsAsync(long id,[FromBody]OrderRequest order)
         {
             if (order == null)
             {
@@ -172,7 +177,7 @@ namespace Shop.Controllers
         /// <response code="400">Exception during database update happened or another exception</response>
         /// <response code="404">Order or orderStatus with given id not found.</response>
         [HttpPut("status/{id}")]
-        public async Task<IActionResult> UpdateOrderStatus([FromQuery]long id,[FromBody]int orderStatusId)
+        public async Task<IActionResult> UpdateOrderStatus(long id,[FromBody]int orderStatusId)
         {
             var orderInDb = await _unitOfWork.Orders.GetAsync(id);
             if(orderInDb == null)
@@ -186,6 +191,7 @@ namespace Shop.Controllers
             {
                 return NotFound("Wrong order status id.");
             }
+
             if (orderInDb.StatusId != orderStatusId)
             {
                 orderInDb.StatusId = orderStatusId;

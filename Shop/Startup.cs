@@ -11,9 +11,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Models;
+using Shop.Services;
 using System;
 using System.IO;
 using System.Reflection;
@@ -40,9 +42,8 @@ namespace Shop
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            services.AddTransient<IProductRepository,ProductRepository>();
-            services.AddTransient<ICategoryRepository,CategoryRepository>();
             services.AddTransient<IUnitOfWork,UnitOfWork>();
+            services.AddSingleton<ITokenGenerator, TokenGenarator>();
             services.AddSwaggerGen( options =>
             {
                 options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -52,6 +53,32 @@ namespace Shop
                 var fileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
                 options.IncludeXmlComments(filePath);
+
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+
             });
             services.AddSwaggerGenNewtonsoftSupport();
 
@@ -166,5 +193,28 @@ namespace Shop
             });
 
         }
+
+        /*public class AddAuthorizationHeaderParameterOperationFilter : IOperationFilter
+        {
+            public void Apply(Operation operation, SchemaRegistry schemaRegistry, ApiDescription apiDescription)
+            {
+                if (operation.parameters != null)
+                {
+                    operation.parameters.Add(new Parameter
+                    {
+                        name = "Authorization",
+                        @in = "header",
+                        description = "access token",
+                        required = false,
+                        type = "string"
+                    });
+                }
+            }
+
+            public void Apply(Operation operation, SchemaRegistry schemaRegistry, System.Web.Http.Description.ApiDescription apiDescription)
+            {
+                throw new NotImplementedException();
+            }
+        }*/
     }
 }

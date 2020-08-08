@@ -17,7 +17,6 @@ namespace Shop.Data
                 .ForMember(p => p.Id, opt => opt.Ignore())
                 .ForMember(p => p.CartLines, opt => opt.Ignore());
 
-
             CreateMap<Category, CategoryDto>();
             CreateMap<CategoryDto, Category>()
                 .ForMember(c => c.Products, opt => opt.Ignore())
@@ -37,12 +36,12 @@ namespace Shop.Data
             CreateMap<CartLine, CartLineDto>()
                 .ForMember(p => p.Product, opt => opt.MapFrom(src => src.Product));
 
-            CreateMap<CartLineDto, CartLine>();
 
             CreateMap<OrderStatus, OrderStatusDto>();
             CreateMap<OrderStatusDto, OrderStatus>();
 
-            CreateMap<OrderRequest, Order>();
+            CreateMap<OrderRequest, Order>()
+                     .ForMember(o => o.Id, opt => opt.Ignore());
 
             CreateMap<CartLineRequest, CartLine>();
 

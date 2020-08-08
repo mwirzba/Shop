@@ -74,7 +74,7 @@ namespace Shop.Controllers
         /// <response code="400">Exception during database update happened</response>
         /// <response code="422">Missing category parameter</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory([FromQuery]byte id,[FromBody] CategoryDto category)
+        public async Task<IActionResult> PutCategory(byte id,[FromBody] CategoryDto category)
         {
             if (category == null)
             {
@@ -139,7 +139,7 @@ namespace Shop.Controllers
         /// <response code="404">Category with id not found</response>
         /// <response code="400">Exception during database update happened</response>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory([FromQuery]byte id)
+        public async Task<IActionResult> DeleteCategory(byte id)
         {
             var category = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);
             if (category == null)

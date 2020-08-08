@@ -10,5 +10,6 @@ namespace Shop.Data.Repositories.Interfaces
         Task<Order> GetOrderWithLines(long id);
         Task<Order> GetFullOrder(long id);
         Task<IEnumerable<Order>> GetFullOrders(long id);
+        Task<IEnumerable<Order>> GetUserOrders(string userId);
     }
 }
