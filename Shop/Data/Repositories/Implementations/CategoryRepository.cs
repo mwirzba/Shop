@@ -1,8 +1,6 @@
 ﻿using Shop.Models;
-using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Collections.Generic;
 using System;
 
 namespace Shop.Data.Repositories
@@ -15,7 +13,6 @@ namespace Shop.Data.Repositories
         {
             get { return context as ApplicationDbContext; }
         }
-
         public Category SingleOrDefault(Expression<Func<Category, bool>> predicate)
         {
             return ApplicationDbContext.Categories.FirstOrDefault(predicate);

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Shop.Dtos;
 using Shop.Models;
-using System.Collections.Concurrent;
 
 namespace Shop.Data
 {
