@@ -6,7 +6,7 @@ While creating this project I learned best coding practices and many useful libr
 
 ### GENERIC REPOSITORY PATTERN
 In this project I used generic repository pattern.
-All calls to database in *Entity Frameworks* has been placed in repositories.
+All calls to database using *Entity Framework* has been placed in repositories.
 * Thanks to this pattern code in controllers is more readable and I do not have to repeat same code.
 * Thanks to repositories interfaces it is also easier to write unit tests.
 
