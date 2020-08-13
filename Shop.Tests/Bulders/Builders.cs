@@ -21,6 +21,8 @@ namespace Shop.Tests.Bulders
         public static OrderBuilder Order => new OrderBuilder();
         public static OrderDtoBuilder OrderDto => new OrderDtoBuilder();
         public static OrderRequestBuilder OrderRequest => new OrderRequestBuilder();
+        public static OrderStatusBuilder OrderStatus => new OrderStatusBuilder();
+        public static OrderStatusDtoBuilder OrderStatusDto => new OrderStatusDtoBuilder();
     }
 
 

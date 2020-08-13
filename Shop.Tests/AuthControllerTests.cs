@@ -30,8 +30,11 @@ namespace Shop.Tests
             _signInManagerMock = new Mock<FakeSignInManager>();
             _tokenGenetaror = new Mock<ITokenGenerator>();
             _httpContext = new Mock<HttpContext>();
-            _tokenGenetaror.Setup(t => t.GenerateToken(It.IsAny<User>(),
-                It.IsAny<IConfiguration>())).Returns("asduykasgdyukasfgasdkuy");
+            _tokenGenetaror.Setup(t => 
+                t.GenerateTokenAsync(It.IsAny<User>(),
+                It.IsAny<IConfiguration>(),
+                _userManagerMock.Object
+                )).ReturnsAsync("asduykasgdyukasfgasdkuy");
 
             _authController = new AuthController(
                 new Mock<IConfiguration>().Object,
@@ -58,7 +61,6 @@ namespace Shop.Tests
 
 
             okResult.StatusCode.Should().Be(StatusCodes.Status200OK);
-
         }
 
         [Test]
@@ -73,7 +75,6 @@ namespace Shop.Tests
             _userManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(newUser);
             _userManagerMock.Setup(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
            
-
             UserDto userDto = new UserDto
             {
                 UserName = "user1"
@@ -83,6 +84,7 @@ namespace Shop.Tests
             var conflictResult = resultFromController as ObjectResult;
             string message = $"User user1 already exists.";
            
+            //Assert
             conflictResult.StatusCode.Should().Be(StatusCodes.Status409Conflict);
             conflictResult.Value.Should().Be(message);
         }
