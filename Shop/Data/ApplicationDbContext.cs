@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Shop.Models;
 
@@ -15,6 +16,35 @@ namespace Shop.Data{
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            const string ADMIN_ID = "a18be9c0-aa65-4af8-bd17-00bd9344e575";
+            const string ROLE_ID = ADMIN_ID;
+            builder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = ROLE_ID,
+                Name = "Admin",
+                NormalizedName = "Admin"
+            });
+
+            var hasher = new PasswordHasher<User>();
+            builder.Entity<User>().HasData(new User
+            {
+                Id = ADMIN_ID,
+                UserName = "Admin",
+                NormalizedUserName = "Admin",
+                Email = "some-admin-email@nonce.fake",
+                NormalizedEmail = "some-admin-email@nonce.fake",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "Admin@1"),
+                SecurityStamp = string.Empty
+            });
+
+            builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+            {
+                RoleId = ROLE_ID,
+                UserId = ADMIN_ID
+            });
+
             builder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
@@ -48,9 +78,10 @@ namespace Shop.Data{
             builder.Entity<OrderStatus>().HasData(
                 new OrderStatus { Id = 1, Name = "InProgress" },
                 new OrderStatus { Id = 2, Name = "Completed" },
-                new OrderStatus { Id = 3, Name = "Reservation" },
-                new OrderStatus { Id = 4, Name = "Complaint" },
-                new OrderStatus { Id = 5, Name = "Canceled" }
+                new OrderStatus { Id = 3, Name = "NotPaid" },
+                new OrderStatus { Id = 4, Name = "Reservation" },
+                new OrderStatus { Id = 5, Name = "Complaint" },
+                new OrderStatus { Id = 6, Name = "Canceled" }
             );
 
 
@@ -71,8 +102,6 @@ namespace Shop.Data{
                    new Category { Id = 5, Name = "Digital Cameras" },
                    new Category { Id = 6, Name = "Cell Phones" }
            );
-
-
 
             builder.Entity<Product>().HasData(
 

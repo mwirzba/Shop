@@ -13,8 +13,9 @@ namespace Shop.Controllers
     /// <summary>
     /// Authorization controller responsible for register new user,login;
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _config;
@@ -38,9 +39,8 @@ namespace Shop.Controllers
         /// <param name="userDto">The user account dto which contains user login and password</param>
         /// <response code="200">Account created</response>
         /// <response code="409">User name is already used. Account has not been created.</response>
-        [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserDto userDto)
+        public async Task<IActionResult> Register([FromBody]UserDto userDto)
         {
             var userExists = await _userManager.FindByNameAsync(userDto.UserName);
             if (userExists != null)
@@ -68,9 +68,8 @@ namespace Shop.Controllers
         /// User has been logged. Token is returned which has to be passed in actions that require to be logged.
         /// </response>
         /// <response code="401">Invalid user name or password</response>
-        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserDto userDto)
+        public async Task<IActionResult> Login([FromBody]UserDto userDto)
         {
             var userInDb = await _userManager.FindByNameAsync(userDto.UserName);
 
@@ -84,9 +83,11 @@ namespace Shop.Controllers
             if (!result.Succeeded)
                 return Unauthorized();
 
+            var token = await _tokenGenerator.GenerateTokenAsync(userInDb, _config, _userManager);
+
             return Ok(new
             {
-                token = _tokenGenerator.GenerateToken(userInDb, _config),
+                token
             });
         }
 
@@ -94,7 +95,6 @@ namespace Shop.Controllers
         /// Allows user to logout
         /// </summary>
         /// <response code="204">User has been logged out.</response>
-
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -103,10 +103,8 @@ namespace Shop.Controllers
                 await _signInManager.SignOutAsync();
             }
             
-
             return NoContent();
         }
-
 
     }
 }

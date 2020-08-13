@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Dtos;
 using Shop.Models;
@@ -32,16 +32,16 @@ namespace Shop.Controllers
         /// </summary>
         /// <response code="200">Returned categories</response>
         /// <response code="404">No categories found in db.</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
             var categoriesInDb = await _unitOfWork.Categories.GetAllAsync();
-            if (categoriesInDb == null || categoriesInDb.Count() == 0)
+            if (categoriesInDb == null)
                 return NotFound();
             var categoryDto = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryDto>>(categoriesInDb);
             return Ok(categoryDto);
         }
-
 
         /// <summary>
         /// Retrieves category by unique id.
@@ -49,6 +49,7 @@ namespace Shop.Controllers
         /// <param name="id">Category id</param>
         /// <response code="200">Category found.</response>
         /// <response code="404">Category with given id not found.</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory([FromBody]byte id)
         {
@@ -62,8 +63,6 @@ namespace Shop.Controllers
             return Ok(_mapper.Map<Category,CategoryDto>(categoryInDb));
         }
 
-
-
         /// <summary>
         /// Updates category by unique id.
         /// </summary>
@@ -73,8 +72,10 @@ namespace Shop.Controllers
         /// <response code="404">Category not found</response>
         /// <response code="400">Exception during database update happened</response>
         /// <response code="422">Missing category parameter</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(byte id,[FromBody] CategoryDto category)
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> PutCategory([FromBody] CategoryDto category,byte id)
         {
             if (category == null)
             {
@@ -109,7 +110,9 @@ namespace Shop.Controllers
         /// <response code="200">Category created</response>
         /// <response code="400">Exception during database update happened</response>
         /// <response code="422">Missing category parameter</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> PostCategory([FromBody]CategoryDto category)
         {
             if (category == null)
@@ -130,7 +133,6 @@ namespace Shop.Controllers
             return Ok();
         }
 
-
         /// <summary>
         /// Deletes category with given id.
         /// </summary>
@@ -138,7 +140,9 @@ namespace Shop.Controllers
         /// <response code="200">Category deleted</response>
         /// <response code="404">Category with id not found</response>
         /// <response code="400">Exception during database update happened</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> DeleteCategory(byte id)
         {
             var category = await _unitOfWork.Categories.SingleOrDefaultAsync(c => c.Id == id);

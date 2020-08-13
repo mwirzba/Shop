@@ -41,7 +41,7 @@ namespace Shop.Data.Repositories.Implementations
                .FirstAsync(o => o.Id == id);
         }
 
-        public async Task<IEnumerable<Order>> GetFullOrders(long id)
+        public async Task<IEnumerable<Order>> GetFullOrders()
         {
             return await ApplicationDbContext.Orders
                .Include(o => o.CartLines)

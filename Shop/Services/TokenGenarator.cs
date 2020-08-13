@@ -1,22 +1,32 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Shop.Models;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Shop.Services
 {
     public class TokenGenarator:  ITokenGenerator
     {
-        public string GenerateToken(User user,IConfiguration config)
+        public async Task<string> GenerateTokenAsync(User user,IConfiguration config,UserManager<User> userManager)
         {
-            var claims = new[]
+            var userRoles = await userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
             };
+
+            foreach (var item in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, item));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("AppSettings:Token").Value));
 
@@ -37,4 +47,3 @@ namespace Shop.Services
         }
     }
 }
-

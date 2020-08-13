@@ -11,15 +11,16 @@ using System;
 using Shop.ResponseHelpers;
 using Newtonsoft.Json;
 using Shop.Respn;
+using Shop.Data;
 
 namespace Shop.Controllers
 {
     /// <summary>
     /// Controller responsible for product CRUD actions
     /// </summary>
+    [ApiController]
     [AllowAnonymous]
     [Route("api/[controller]")]
-    [ApiController]
     public class ProductsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -38,7 +39,9 @@ namespace Shop.Controllers
         /// <response code="200">Created new product</response>
         /// <response code="422">Missing product in body</response>
         /// <response code="400">Exception during database update or other proccess</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPost]
+        [Authorize(Roles = Roles.Admin + "," + Roles.ProductManager)]
         public async Task<IActionResult> PostProductAsync([FromBody]ProductDto product)
         {
             if (product == null)
@@ -160,7 +163,9 @@ namespace Shop.Controllers
         /// <response code="200">Returned list of products</response>
         /// <response code="404">Not found product with given id</response>
         /// <response code="400">Exception during database update or other proccess.</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.ProductManager)]
         public async Task<IActionResult> PutProductAsync(ProductDto product,int id)
         {
             if (product == null)
@@ -196,7 +201,9 @@ namespace Shop.Controllers
         /// <response code="200">Deleted product</response>
         /// <response code="200">Not found product with given id.</response>
         /// <response code="400">Exception during database update or other proccess</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.ProductManager)]
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
             var productInDb = await _unitOfWork.Products.GetAsync(id);
@@ -204,6 +211,7 @@ namespace Shop.Controllers
                 return NotFound();
 
             _unitOfWork.Products.Remove(productInDb);
+
             try
             {
                 await _unitOfWork.CompleteAsync();

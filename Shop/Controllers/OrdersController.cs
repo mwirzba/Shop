@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shop.Data;
 using Shop.Data.Repositories;
-
 using Shop.Dtos;
 using Shop.Models;
 using System;
@@ -17,7 +17,6 @@ namespace Shop.Controllers
     /// Controller responsible for orders management.
     /// </summary>
     [ApiController]
-    [AllowAnonymous]
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
@@ -38,12 +37,14 @@ namespace Shop.Controllers
         /// <response code="200">Order rerurned</response>
         /// <response code="400">Exception occurred</response>
         /// <response code="404">Orders in database not found</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpGet]
+        [Authorize(Roles = Roles.Admin + "," + Roles.OrdersManager)]
         public async Task<IActionResult> GetOrdersAsync()
         {
             try
             {
-                var ordersInDb = await _unitOfWork.Orders.GetOrdersWithLines();
+                var ordersInDb = await _unitOfWork.Orders.GetFullOrders();
                 if(ordersInDb == null)
                 {
                     return NotFound();
@@ -65,7 +66,9 @@ namespace Shop.Controllers
         /// <response code="200">Order returned</response>
         /// <response code="400">Exception occurred</response>
         /// <response code="404">Order with given id not found</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.OrdersManager)]
         public async Task<IActionResult> GetOrderAsync(long id)
         {
             try
@@ -92,6 +95,7 @@ namespace Shop.Controllers
         /// <response code="200">Order created</response>
         /// <response code="422">Missing order paramether</response>
         /// <response code="400">Exception during database update happened or another exception</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPost]
         public async Task<IActionResult> PostOrderAsync([FromBody]OrderRequest order)
         {
@@ -135,7 +139,9 @@ namespace Shop.Controllers
         /// <response code="422">Missing order paramether</response>
         /// <response code="400">Exception during database update happened or another exception</response>
         /// <response code="404">Order with given id not found</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.OrdersManager)]
         public async Task<IActionResult> PutOrderInformationsAsync(long id,[FromBody]OrderRequest order)
         {
             if (order == null)
@@ -169,15 +175,17 @@ namespace Shop.Controllers
 
 
         /// <summary>
-        /// Updates order.
+        /// Updates order status.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Order id</param>
         /// <param name="orderStatusId">Order status id</param>
         /// <response code="200">Order status has been updated.</response>
         /// <response code="400">Exception during database update happened or another exception</response>
         /// <response code="404">Order or orderStatus with given id not found.</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPut("status/{id}")]
-        public async Task<IActionResult> UpdateOrderStatus(long id,[FromBody]int orderStatusId)
+        [Authorize(Roles = Roles.Admin + "," + Roles.OrdersManager)]
+        public async Task<IActionResult> UpdateOrderStatus(long id,[FromQuery]int orderStatusId)
         {
             var orderInDb = await _unitOfWork.Orders.GetAsync(id);
             if(orderInDb == null)

@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shop.Data;
 using Shop.Data.Repositories;
 using Shop.Dtos;
 using Shop.Models;
@@ -13,9 +14,9 @@ namespace Shop.Controllers
     /// <summary>
     /// Controller responsible for order status CRUD actions.
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    [Route("api/[controller]")]
+    [Authorize(Roles = Roles.Admin + "," + Roles.OrdersManager)]
     public class OrderStatusController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -26,12 +27,12 @@ namespace Shop.Controllers
             _mapper = mapper;
         }
 
-
         /// <summary>
         /// Retrives all orders statuses
         /// </summary>
         /// <response code="200">Returned order list</response>
         /// <response code="404">Not Found order status</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpGet]
         public async Task<IActionResult> GetOrderStatus()
         {
@@ -42,12 +43,14 @@ namespace Shop.Controllers
             var orderStatusesDto = _mapper.Map<IEnumerable<OrderStatusDto>>(orderStatuses);
             return Ok(orderStatusesDto);
         }
+
         /// <summary>
         /// Retrives order status by unique id
         /// </summary>
         /// <param name="id">Order status id</param>
         /// <response code="200">Found order status</response>
         /// <response code="404">Not Found order status</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderStatus(int id)
         {
@@ -63,7 +66,6 @@ namespace Shop.Controllers
             return Ok(orderStatusDto);
         }
 
-
         /// <summary>
         /// Updates order status by unique id
         /// </summary>
@@ -73,6 +75,7 @@ namespace Shop.Controllers
         /// <response code="422">Missing orderstatus paramether.</response>
         /// <response code="400">Wrong id of updated order is not equal to given id.</response>
         /// <response code="404">Not Found order status</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateOrderStatus(int id,[FromBody]OrderStatusDto orderStatus)
         {
@@ -87,7 +90,7 @@ namespace Shop.Controllers
                 return UnprocessableEntity();
             }
 
-            var orderStatusInDb = await _unitOfWork.OrderStatuses.GetAsync(orderStatus.Id);
+            var orderStatusInDb = await _unitOfWork.OrderStatuses.GetAsync(id);
             _mapper.Map(orderStatus, orderStatusInDb);
 
             try
@@ -110,7 +113,6 @@ namespace Shop.Controllers
             return Ok();
         }
 
-
         /// <summary>
         /// Creates order status
         /// </summary>
@@ -118,6 +120,7 @@ namespace Shop.Controllers
         /// <response code="200">Created order status</response>
         /// <response code="422">Missing orderstatus paramether.</response>
         /// <response code="400">Exception during database update.</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpPost]
         public async Task<IActionResult> PostOrderStatus(OrderStatusDto orderStatus)
         {
@@ -147,6 +150,7 @@ namespace Shop.Controllers
         /// <response code="200">Deleted order status</response>
         /// <response code="404">Order status not found.</response>
         /// <response code="400">Exception during database update.</response>
+        /// <response code="403">User is unauthorized.</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderStatus(int id)
         {
@@ -165,7 +169,7 @@ namespace Shop.Controllers
             {
                 return BadRequest();
             }
-            return Ok(_mapper.Map<OrderStatusDto>(orderStatus));
+            return Ok();
         }
 
     }

@@ -4,6 +4,60 @@
         <name>Shop</name>
     </assembly>
     <members>
+        <member name="T:Shop.Controllers.AdministrationController">
+            <summary>
+            Controller responsible for user management
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.AdministrationController.GetUsersInRole(System.String)">
+            <summary>
+            Returns list of users with given role id.
+            </summary>
+            <response code="200">Returned users</response>
+            <response code="404">Role with given id not found in db.</response>
+            <response code="403">User is unauthorized.</response>
+            <response code="400">Exception during code execution</response>
+        </member>
+        <member name="M:Shop.Controllers.AdministrationController.GetUsers">
+            <summary>
+            Returns all users.
+            </summary>
+            <response code="200">Returned users</response>
+            <response code="404">Users not found in database.</response>
+            <response code="403">User is unauthorized.</response>
+            <response code="400">Exception during code execution</response>
+        </member>
+        <member name="M:Shop.Controllers.AdministrationController.GetUserByUserName(System.String)">
+            <summary>
+            Returns user with given username.
+            </summary>
+            <response code="200">Returned user</response>
+            <response code="404">User not found in database.</response>
+            <response code="403">User is unauthorized.</response>
+            <response code="400">Exception during code execution</response>
+        </member>
+        <member name="M:Shop.Controllers.AdministrationController.AddUserToRole(System.String,System.String)">
+            <summary>
+            Adds role to user.
+            </summary>
+            <param name="roleId">Role id</param>
+            <param name="userName">User name of the user to whom we want to assign role.</param>
+            <response code="200">Added role to user.</response>
+            <response code="404">User not found in database or role not found.</response>
+            <response code="403">User is unauthorized to add roles to users.</response>
+            <response code="400">Exception during code execution</response>
+        </member>
+        <member name="M:Shop.Controllers.AdministrationController.RemoveUserFromRole(System.String,System.String)">
+            <summary>
+            Removes role from user.
+            </summary>
+            <param name="roleId">Role id</param>
+            <param name="userName">User name of the user to whom we want to remove role.</param>
+            <response code="200">Removed role from user.</response>
+            <response code="404">User not found in database or role not found.</response>
+            <response code="403">User is unauthorized to add roles to users.</response>
+            <response code="400">Exception during code execution</response>
+        </member>
         <member name="T:Shop.Controllers.AuthController">
             <summary>
             Authorization controller responsible for register new user,login;
@@ -44,6 +98,7 @@
             </summary>
             <response code="200">Returned categories</response>
             <response code="404">No categories found in db.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.CategoriesController.GetCategory(System.Byte)">
             <summary>
@@ -52,8 +107,9 @@
             <param name="id">Category id</param>
             <response code="200">Category found.</response>
             <response code="404">Category with given id not found.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
-        <member name="M:Shop.Controllers.CategoriesController.PutCategory(System.Byte,Shop.Dtos.CategoryDto)">
+        <member name="M:Shop.Controllers.CategoriesController.PutCategory(Shop.Dtos.CategoryDto,System.Byte)">
             <summary>
             Updates category by unique id.
             </summary>
@@ -63,6 +119,7 @@
             <response code="404">Category not found</response>
             <response code="400">Exception during database update happened</response>
             <response code="422">Missing category parameter</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.CategoriesController.PostCategory(Shop.Dtos.CategoryDto)">
             <summary>
@@ -72,6 +129,7 @@
             <response code="200">Category created</response>
             <response code="400">Exception during database update happened</response>
             <response code="422">Missing category parameter</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.CategoriesController.DeleteCategory(System.Byte)">
             <summary>
@@ -81,6 +139,7 @@
             <response code="200">Category deleted</response>
             <response code="404">Category with id not found</response>
             <response code="400">Exception during database update happened</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="T:Shop.Controllers.OrdersController">
             <summary>
@@ -94,6 +153,7 @@
             <response code="200">Order rerurned</response>
             <response code="400">Exception occurred</response>
             <response code="404">Orders in database not found</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrdersController.GetOrderAsync(System.Int64)">
             <summary>
@@ -103,6 +163,7 @@
             <response code="200">Order returned</response>
             <response code="400">Exception occurred</response>
             <response code="404">Order with given id not found</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrdersController.PostOrderAsync(Shop.Dtos.OrderRequest)">
             <summary>
@@ -112,6 +173,7 @@
             <response code="200">Order created</response>
             <response code="422">Missing order paramether</response>
             <response code="400">Exception during database update happened or another exception</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrdersController.PutOrderInformationsAsync(System.Int64,Shop.Dtos.OrderRequest)">
             <summary>
@@ -123,16 +185,18 @@
             <response code="422">Missing order paramether</response>
             <response code="400">Exception during database update happened or another exception</response>
             <response code="404">Order with given id not found</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrdersController.UpdateOrderStatus(System.Int64,System.Int32)">
             <summary>
-            Updates order.
+            Updates order status.
             </summary>
-            <param name="id"></param>
+            <param name="id">Order id</param>
             <param name="orderStatusId">Order status id</param>
             <response code="200">Order status has been updated.</response>
             <response code="400">Exception during database update happened or another exception</response>
             <response code="404">Order or orderStatus with given id not found.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="T:Shop.Controllers.OrderStatusController">
             <summary>
@@ -145,6 +209,7 @@
             </summary>
             <response code="200">Returned order list</response>
             <response code="404">Not Found order status</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrderStatusController.GetOrderStatus(System.Int32)">
             <summary>
@@ -153,6 +218,7 @@
             <param name="id">Order status id</param>
             <response code="200">Found order status</response>
             <response code="404">Not Found order status</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrderStatusController.UpdateOrderStatus(System.Int32,Shop.Dtos.OrderStatusDto)">
             <summary>
@@ -164,6 +230,7 @@
             <response code="422">Missing orderstatus paramether.</response>
             <response code="400">Wrong id of updated order is not equal to given id.</response>
             <response code="404">Not Found order status</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrderStatusController.PostOrderStatus(Shop.Dtos.OrderStatusDto)">
             <summary>
@@ -173,6 +240,7 @@
             <response code="200">Created order status</response>
             <response code="422">Missing orderstatus paramether.</response>
             <response code="400">Exception during database update.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.OrderStatusController.DeleteOrderStatus(System.Int32)">
             <summary>
@@ -182,6 +250,7 @@
             <response code="200">Deleted order status</response>
             <response code="404">Order status not found.</response>
             <response code="400">Exception during database update.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="T:Shop.Controllers.ProductsController">
             <summary>
@@ -196,6 +265,7 @@
             <response code="200">Created new product</response>
             <response code="422">Missing product in body</response>
             <response code="400">Exception during database update or other proccess</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.ProductsController.GetProductsByPageAsync(Shop.ResponseHelpers.PaginationQuery,Shop.ResponseHelpers.FilterProductParams)">
             <summary>
@@ -233,6 +303,7 @@
             <response code="200">Returned list of products</response>
             <response code="404">Not found product with given id</response>
             <response code="400">Exception during database update or other proccess.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.ProductsController.DeleteProductAsync(System.Int32)">
             <summary>
@@ -242,6 +313,7 @@
             <response code="200">Deleted product</response>
             <response code="200">Not found product with given id.</response>
             <response code="400">Exception during database update or other proccess</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="T:Shop.Controllers.UserController">
             <summary>
@@ -254,6 +326,8 @@
             </summary>
             <response code="200">Returned user informations</response>
             <response code="401">User is not logged</response>
+            <response code="400">Exception during operation.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.UserController.PatchUserInformations(Shop.Dtos.UserDto)">
             <summary>
@@ -261,7 +335,9 @@
             </summary>
             <param name="userDto">User data</param>
             <response code="200">Returned user informations</response>
-            <response code="401">User is not logged</response>
+            <response code="401">User is not logged</response>     
+            <response code="400">Exception during operation.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="M:Shop.Controllers.UserController.GetUserOrders">
             <summary>
@@ -270,6 +346,8 @@
             <response code="200">Returned user informations</response>
             <response code="401">User is not logged</response>
             <response code="404">User not found in database</response>
+            <response code="400">Exception during operation.</response>
+            <response code="403">User is unauthorized.</response>
         </member>
         <member name="P:Shop.ResponseHelpers.FilterParams.SearchString">
             <summary>

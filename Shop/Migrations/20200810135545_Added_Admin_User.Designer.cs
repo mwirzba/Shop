@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop.Data;
 
 namespace Shop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200810135545_Added_Admin_User")]
+    partial class Added_Admin_User
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +51,7 @@ namespace Shop.Migrations
                         new
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "52f3da51-26b1-425e-aa30-4b7dfeb8ff76",
+                            ConcurrencyStamp = "781f0424-5675-4f9c-b5b3-5edbb2c5f256",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         });
@@ -336,21 +338,16 @@ namespace Shop.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "NotPaid"
-                        },
-                        new
-                        {
-                            Id = 4,
                             Name = "Reservation"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 4,
                             Name = "Complaint"
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 5,
                             Name = "Canceled"
                         });
                 });
@@ -484,13 +481,13 @@ namespace Shop.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "653eb4a6-78ea-4840-b9af-165f10255dc3",
+                            ConcurrencyStamp = "3c02b1a3-6bfa-4120-a2cf-ee5cb37b6f5a",
                             Email = "some-admin-email@nonce.fake",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "some-admin-email@nonce.fake",
                             NormalizedUserName = "Admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAmzEvNyqjGS4JOBeI+X4f6r6oyy/uezGOBHctMz/m31XOpZ846tS7uPpN42zb6LsA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDOZx/GnxNij3FG6Shhjxh/sci5b4/cPGuvksk/OgFjCYOjBnhKQRo8HHDYugC7c8Q==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
